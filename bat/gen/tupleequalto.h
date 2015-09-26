@@ -1,4 +1,4 @@
-// bat/gen/equalto.t.cpp                                              -*-C++-*-
+// bat/gen/tupleequalto.h                                             -*-C++-*-
 // ----------------------------------------------------------------------------
 //  Copyright (C) 2015 Dietmar Kuehl http://www.dietmar-kuehl.de         
 //                                                                       
@@ -23,47 +23,44 @@
 //  OTHER DEALINGS IN THE SOFTWARE. 
 // ----------------------------------------------------------------------------
 
-#include "bat/gen/equalto.h"
-#include <bsl_iostream.h>
-#include <bsl_stdexcept.h>
+#ifndef INCLUDED_BAT_GEN_TUPLEEQUALTO
+#define INCLUDED_BAT_GEN_TUPLEEQUALTO
 
-#define CATCH_CONFIG_MAIN
-#include <catch.hpp>
-
-using namespace BloombergLP;
+#include "bat/gen/tuplelike.h"
+#include <bslmf_enableif.h>
 
 // ----------------------------------------------------------------------------
 
-namespace {
-    class Value
-        : private batgen::equal_to<Value> {
-    private:
-        int d_value;
+namespace BloombergLP {
+    namespace batgen {
+        template <typename> class tuple_equalto;
 
-    public:
-        explicit Value(int value): d_value(value) {}
-        bool equal_to(Value const& other) const {
-            return this->d_value == other.d_value;
+        template <int Index, typename Type>
+        typename bsl::enable_if<batgen::tuple_size<Type>::value <= Index, bool>::type
+        tuple_equalto_element(Type const&, Type const&) {
+            return true;
         }
-        int value() const { return this->d_value; }
-    };
-    
-    bsl::ostream& operator<< (bsl::ostream& out, Value const& value) {
-        return out << value.value();
+        template <int Index, typename Type>
+        typename bsl::enable_if<Index < batgen::tuple_size<Type>::value, bool>::type
+        tuple_equalto_element(Type const& value0, Type const& value1) {
+            return batgen::get<Index>(value0) == batgen::get<Index>(value1)
+                && tuple_equalto_element<Index + 1>(value0, value1);
+        }
     }
 }
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("breathing test", "[batgen::equal_to]") {
-    Value v1(1), v2(2);
-
-    REQUIRE(v1 == v1);
-    REQUIRE(v1 != v2);
-}
+template <typename Type>
+class BloombergLP::batgen::tuple_equalto {
+    friend bool operator== (Type const& value0, Type const& value1) {
+        return batgen::tuple_equalto_element<0>(value0, value1);
+    }
+    friend bool operator!= (Type const& value0, Type const& value1) {
+        return !(value0 == value1);
+    }
+};
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("no size contribution", "[batgen::equal_to]") {
-    REQUIRE(sizeof(Value) == sizeof(int));
-}
+#endif

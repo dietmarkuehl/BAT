@@ -36,7 +36,7 @@ using namespace BloombergLP;
 
 namespace {
     class Value
-        : private batgen::less_than::tag {
+        : private batgen::less_than<Value> {
     private:
         int d_value;
 

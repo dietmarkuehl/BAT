@@ -1,4 +1,4 @@
-// bat/gen/equalto.t.cpp                                              -*-C++-*-
+// bat/gen/tuplelike.cpp                                              -*-C++-*-
 // ----------------------------------------------------------------------------
 //  Copyright (C) 2015 Dietmar Kuehl http://www.dietmar-kuehl.de         
 //                                                                       
@@ -23,47 +23,4 @@
 //  OTHER DEALINGS IN THE SOFTWARE. 
 // ----------------------------------------------------------------------------
 
-#include "bat/gen/equalto.h"
-#include <bsl_iostream.h>
-#include <bsl_stdexcept.h>
-
-#define CATCH_CONFIG_MAIN
-#include <catch.hpp>
-
-using namespace BloombergLP;
-
-// ----------------------------------------------------------------------------
-
-namespace {
-    class Value
-        : private batgen::equal_to<Value> {
-    private:
-        int d_value;
-
-    public:
-        explicit Value(int value): d_value(value) {}
-        bool equal_to(Value const& other) const {
-            return this->d_value == other.d_value;
-        }
-        int value() const { return this->d_value; }
-    };
-    
-    bsl::ostream& operator<< (bsl::ostream& out, Value const& value) {
-        return out << value.value();
-    }
-}
-
-// ----------------------------------------------------------------------------
-
-TEST_CASE("breathing test", "[batgen::equal_to]") {
-    Value v1(1), v2(2);
-
-    REQUIRE(v1 == v1);
-    REQUIRE(v1 != v2);
-}
-
-// ----------------------------------------------------------------------------
-
-TEST_CASE("no size contribution", "[batgen::equal_to]") {
-    REQUIRE(sizeof(Value) == sizeof(int));
-}
+#include "bat/gen/tuplelike.h"

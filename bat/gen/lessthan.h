@@ -33,35 +33,30 @@
 
 namespace BloombergLP {
     namespace batgen {
-        namespace less_than {
-            struct tag {};
-
-            template <typename Type>
-            typename bsl::enable_if<batmf::IsBaseOf<tag, Type>::value, bool>::type
-            operator< (Type const& value0, Type const& value1) {
-                return value0.less_than(value1);
-            }
-
-            template <typename Type>
-            typename bsl::enable_if<batmf::IsBaseOf<tag, Type>::value, bool>::type
-            operator<= (Type const& value0, Type const& value1) {
-                return !value1.less_than(value0);
-            }
-
-            template <typename Type>
-            typename bsl::enable_if<batmf::IsBaseOf<tag, Type>::value, bool>::type
-            operator> (Type const& value0, Type const& value1) {
-                return value1.less_than(value0);
-            }
-
-            template <typename Type>
-            typename bsl::enable_if<batmf::IsBaseOf<tag, Type>::value, bool>::type
-            operator>= (Type const& value0, Type const& value1) {
-                return !value0.less_than(value1);
-            }
-        }
+        template <typename T> struct less_than;
     }
 }
+
+// ----------------------------------------------------------------------------
+
+template <typename Type>
+struct BloombergLP::batgen::less_than {
+    friend bool operator< (Type const& value0, Type const& value1) {
+        return value0.less_than(value1);
+    }
+
+    friend bool operator<= (Type const& value0, Type const& value1) {
+        return !value1.less_than(value0);
+    }
+
+    friend bool operator> (Type const& value0, Type const& value1) {
+        return value1.less_than(value0);
+    }
+
+    friend bool operator>= (Type const& value0, Type const& value1) {
+        return !value0.less_than(value1);
+    }
+};
 
 // ----------------------------------------------------------------------------
 

@@ -1,4 +1,4 @@
-// bat/gen/equalto.t.cpp                                              -*-C++-*-
+// bat/gen/tuplelike.t.cpp                                            -*-C++-*-
 // ----------------------------------------------------------------------------
 //  Copyright (C) 2015 Dietmar Kuehl http://www.dietmar-kuehl.de         
 //                                                                       
@@ -23,9 +23,8 @@
 //  OTHER DEALINGS IN THE SOFTWARE. 
 // ----------------------------------------------------------------------------
 
-#include "bat/gen/equalto.h"
+#include "bat/gen/tuplelike.h"
 #include <bsl_iostream.h>
-#include <bsl_stdexcept.h>
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
@@ -35,35 +34,29 @@ using namespace BloombergLP;
 // ----------------------------------------------------------------------------
 
 namespace {
-    class Value
-        : private batgen::equal_to<Value> {
-    private:
-        int d_value;
-
+    class Value {
+        bool bv;
+        int  iv;
+        char cv;
     public:
-        explicit Value(int value): d_value(value) {}
-        bool equal_to(Value const& other) const {
-            return this->d_value == other.d_value;
-        }
-        int value() const { return this->d_value; }
+        typedef batgen::elements<
+            batgen::const_element<bool, Value, &Value::bv>,
+            batgen::const_element<int,  Value, &Value::iv>,
+            batgen::const_element<char, Value, &Value::cv>
+        > tuple;
+
+        Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
     };
-    
-    bsl::ostream& operator<< (bsl::ostream& out, Value const& value) {
-        return out << value.value();
-    }
 }
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("breathing test", "[batgen::equal_to]") {
-    Value v1(1), v2(2);
+TEST_CASE("breating test", "[batgen::tuple_like]") {
+    REQUIRE(batgen::tuple_size<Value>::value == 3);
 
-    REQUIRE(v1 == v1);
-    REQUIRE(v1 != v2);
-}
+    Value value(true, 17, 'a');
 
-// ----------------------------------------------------------------------------
-
-TEST_CASE("no size contribution", "[batgen::equal_to]") {
-    REQUIRE(sizeof(Value) == sizeof(int));
+    REQUIRE(batgen::get<0>(value));
+    REQUIRE(batgen::get<1>(value) == 17);
+    REQUIRE(batgen::get<2>(value) == 'a');
 }

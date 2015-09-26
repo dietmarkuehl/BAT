@@ -1,4 +1,4 @@
-// bat/gen/equalto.t.cpp                                              -*-C++-*-
+// bat/gen/tupleoutput.h                                              -*-C++-*-
 // ----------------------------------------------------------------------------
 //  Copyright (C) 2015 Dietmar Kuehl http://www.dietmar-kuehl.de         
 //                                                                       
@@ -23,47 +23,44 @@
 //  OTHER DEALINGS IN THE SOFTWARE. 
 // ----------------------------------------------------------------------------
 
-#include "bat/gen/equalto.h"
-#include <bsl_iostream.h>
-#include <bsl_stdexcept.h>
+#ifndef INCLUDED_BAT_GEN_TUPLEOUTPUT
+#define INCLUDED_BAT_GEN_TUPLEOUTPUT
 
-#define CATCH_CONFIG_MAIN
-#include <catch.hpp>
-
-using namespace BloombergLP;
+#include "bat/gen/tuplelike.h"
+#include <bsl_ostream.h>
+#include <bslmf_enableif.h>
 
 // ----------------------------------------------------------------------------
 
-namespace {
-    class Value
-        : private batgen::equal_to<Value> {
-    private:
-        int d_value;
+namespace BloombergLP {
+    namespace batgen {
+        template <typename> class tuple_output;
 
-    public:
-        explicit Value(int value): d_value(value) {}
-        bool equal_to(Value const& other) const {
-            return this->d_value == other.d_value;
+        template <int Index, typename Type>
+        typename bsl::enable_if<batgen::tuple_size<Type>::value <= Index>::type
+        tuple_output_print(bsl::ostream&, Type const&) {
         }
-        int value() const { return this->d_value; }
-    };
-    
-    bsl::ostream& operator<< (bsl::ostream& out, Value const& value) {
-        return out << value.value();
+        template <int Index, typename Type>
+        typename bsl::enable_if<Index < batgen::tuple_size<Type>::value>::type
+        tuple_output_print(bsl::ostream& out, Type const& value) {
+            out << ' ' << batgen::get<Index>(value)
+                << (Index + 1 < batgen::tuple_size<Type>::value? ",": " ");
+            tuple_output_print<Index + 1>(out, value);
+        }
     }
 }
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("breathing test", "[batgen::equal_to]") {
-    Value v1(1), v2(2);
-
-    REQUIRE(v1 == v1);
-    REQUIRE(v1 != v2);
-}
+template <typename Type>
+class BloombergLP::batgen::tuple_output {
+    friend bsl::ostream& operator<< (bsl::ostream& out, Type const& value) {
+        out << "{";
+        tuple_output_print<0>(out, value);
+        return out << "}";
+    }
+};
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("no size contribution", "[batgen::equal_to]") {
-    REQUIRE(sizeof(Value) == sizeof(int));
-}
+#endif

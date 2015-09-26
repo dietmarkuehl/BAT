@@ -2,23 +2,40 @@
 #  ----------------------------------------------------------------------------
 
 NAME     = bat
-COMPILER = gcc
 
-CXX      = /opt/llvm/bin/clang++
-BINDIR   = bin/$(COMPILER)
-CPPFLAGS = -I. -I/usr/local/include/bsl
+COMPILER = default
 CXXFLAGS = -W -Wall -g
 DEPFLAGS = -M
+
+ifeq ($(COMPILER),gcc)
+	CXX      = /opt/gcc-current/bin/g++
+	CXXFLAGS = -W -Wall -g
+	DEPFLAGS = -M
+endif
+ifeq ($(COMPILER),clang)
+	CXX      = /opt/llvm-current/bin/clang++
+	CXXFLAGS = -W -Wall -g
+	DEPFLAGS = -M
+endif
+
+BINDIR   = bin/$(COMPILER)
+CPPFLAGS = -I. -I/usr/local/include/bsl
 LDFLAGS  = -L$(BINDIR)
 LDLIBS   = -l$(NAME) -lbsl
+RANLIB   = ranlib
 
 #  ----------------------------------------------------------------------------
 
 LIBCXXFILES += \
 	bat/gen/equalto.cpp \
 	bat/gen/lessthan.cpp \
+	bat/gen/tupleequalto.cpp \
+	bat/gen/tuplelike.cpp \
+	bat/gen/tupleoutput.cpp \
 	bat/ma/allocator.cpp \
 	bat/mf/isbaseof.cpp \
+
+# LIBCXXFILES = bat/gen/tupleoutput.cpp
 
 LIBOFILES    = $(LIBCXXFILES:%.cpp=$(BINDIR)/%.o)
 TESTCXXFILES = $(LIBCXXFILES:%.cpp=%.t.cpp)
@@ -43,6 +60,7 @@ check: $(TESTCXXFILES:%.cpp=$(BINDIR)/%)
 
 $(BINDIR)/lib$(NAME).a: $(LIBOFILES)
 	$(AR) rcu $@ $(LIBOFILES)
+	$(RANLIB) $@
 
 $(BINDIR)/%.o: %.cpp
 	@mkdir -p $(@D)

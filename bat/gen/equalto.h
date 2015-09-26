@@ -26,30 +26,34 @@
 #ifndef INCLUDED_BATGEN_EQUALTO
 #define INCLUDED_BATGEN_EQUALTO
 
-#include <bat/mf/isbaseof.h>
-#include <bslmf_enableif.h>
-
 // ----------------------------------------------------------------------------
+// The class template `equal_to` is use to tag a type as providing an equality
+// operation. A class providing an equality operation could derive from it to
+// get the inequality operation provided based on the equality. If the class
+// `Type` deriving from `equal_to<Type>` doesn't provide an equality operator,
+// it is assumed that there is a member operation `equal_to()` which can be
+// used to implement the equality operation.
 
 namespace BloombergLP {
     namespace batgen {
-        namespace equal_to {
-            struct tag {};
-
-            template <typename Type>
-            typename bsl::enable_if<batmf::IsBaseOf<tag, Type>::value, bool>::type
-            operator== (Type const& value0, Type const& value1) {
-                return value0.equal_to(value1);
-            }
-
-            template <typename Type>
-            typename bsl::enable_if<batmf::IsBaseOf<tag, Type>::value, bool>::type
-            operator!= (Type const& value0, Type const& value1) {
-                return !value0.equal_to(value1);
-            }
-        }
+        template <typename Type> struct equal_to;
     }
 }
+
+// ----------------------------------------------------------------------------
+
+template <typename Type>
+struct BloombergLP::batgen::equal_to {
+    friend bool
+    operator== (Type const& value0, Type const& value1) {
+        return value0.equal_to(value1);
+    }
+
+    friend bool
+    operator!= (Type const& value0, Type const& value1) {
+        return !(value0 == value1);
+    }
+};
 
 // ----------------------------------------------------------------------------
 
