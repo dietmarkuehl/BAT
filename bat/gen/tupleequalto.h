@@ -30,6 +30,30 @@
 #include <bslmf_enableif.h>
 
 // ----------------------------------------------------------------------------
+// The class template `batgen::tuple_equalto<T>` is used to provide equality
+// operators for `T` based on a tuple-like member declaration (see
+// `batgen::tuple`): simply derive from `batgen::tuple_equalto<T>` and provide
+// a member `typedef` named `tuple` listing the salient members of `T`. For
+// example:
+//
+//    class Value
+//        : private batgen::tuple_equalto<Value>
+//    {
+//        bool bv;
+//        int  iv;
+//        char cv;
+//    public:
+//        typedef batgen::tuple_members<
+//            batgen::tuple_const_member<bool, Value, &Value::bv>,
+//            batgen::tuple_const_member<int,  Value, &Value::iv>,
+//            batgen::tuple_const_member<char, Value, &Value::cv>
+//        > tuple;
+//
+//        Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
+//    };
+//
+// The base class `batgen::tuple_equalto<Value>` can [and probably should] be
+// `private`! The provided operators are non-member operators found via ADL.
 
 namespace BloombergLP {
     namespace batgen {

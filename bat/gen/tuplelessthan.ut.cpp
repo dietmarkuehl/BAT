@@ -46,28 +46,75 @@ namespace {
         typedef batgen::tuple_members<
             batgen::tuple_const_member<bool, Value, &Value::bv>,
             batgen::tuple_const_member<int,  Value, &Value::iv>,
-            batgen::tuple_const_member<char, Value, &Value::cv>,
-        void
+            batgen::tuple_const_member<char, Value, &Value::cv>
         > tuple;
 
         Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
+    };
+
+    struct Sizer {
+        bool bv;
+        int  iv;
+        char cv;
     };
 }
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("breathing test", "[batgen::tuple_like]") {
+TEST_CASE("breathing test", "[batgen::tuple_lessthan]") {
+    Value value(true,  17, 'b');
+
+    REQUIRE_FALSE(value <  value);
+    REQUIRE      (value <= value);
+    REQUIRE_FALSE(value >  value);
+    REQUIRE      (value >= value);
+}
+
+TEST_CASE("no size impact", "[batgen::tuple_lessthan]") {
+    REQUIRE(sizeof(Value) == sizeof(Sizer));
+}
+
+TEST_CASE("difference in first member", "[batgen::tuple_lessthan]") {
     Value value0(true,  17, 'b');
     Value value1(false, 17, 'b');
-    Value value2(true,  16, 'b');
-    Value value3(true,  17, 'a');
 
-    REQUIRE_FALSE(value0 < value0);
+    REQUIRE_FALSE(value0 <  value1);
+    REQUIRE_FALSE(value0 <= value1);
+    REQUIRE      (value0 >  value1);
+    REQUIRE      (value0 >= value1);
 
-    REQUIRE_FALSE(value0 < value1);
-    REQUIRE      (value1 < value0);
-    REQUIRE_FALSE(value0 < value2);
-    REQUIRE      (value2 < value0);
-    REQUIRE_FALSE(value0 < value3);
-    REQUIRE      (value3 < value0);
+    REQUIRE      (value1 <  value0);
+    REQUIRE      (value1 <= value0);
+    REQUIRE_FALSE(value1 >  value0);
+    REQUIRE_FALSE(value1 >= value0);
+}
+
+TEST_CASE("difference in second member", "[batgen::tuple_lessthan]") {
+    Value value0(true, 17, 'b');
+    Value value1(true, 16, 'b');
+
+    REQUIRE_FALSE(value0 <  value1);
+    REQUIRE_FALSE(value0 <= value1);
+    REQUIRE      (value0 >  value1);
+    REQUIRE      (value0 >= value1);
+
+    REQUIRE      (value1 <  value0);
+    REQUIRE      (value1 <= value0);
+    REQUIRE_FALSE(value1 >  value0);
+    REQUIRE_FALSE(value1 >= value0);
+}
+
+TEST_CASE("difference in third member", "[batgen::tuple_lessthan]") {
+    Value value0(true, 17, 'b');
+    Value value1(true, 17, 'a');
+
+    REQUIRE_FALSE(value0 <  value1);
+    REQUIRE_FALSE(value0 <= value1);
+    REQUIRE      (value0 >  value1);
+    REQUIRE      (value0 >= value1);
+
+    REQUIRE      (value1 <  value0);
+    REQUIRE      (value1 <= value0);
+    REQUIRE_FALSE(value1 >  value0);
+    REQUIRE_FALSE(value1 >= value0);
 }

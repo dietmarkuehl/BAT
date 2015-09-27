@@ -30,6 +30,30 @@
 #include <bslmf_enableif.h>
 
 // ----------------------------------------------------------------------------
+// The class template `batgen::tuple_lessthan<T>` is used to provide relational
+// operators for `T` based on a tuple-like member declaration (see
+// `batgen::tuple`): simply derive from `batgen::tuple_lessthan<T>` and provide
+// a member `typedef` named `tuple` listing the salient members of `T`. For
+// example:
+//
+//    class Value
+//        : private batgen::tuple_lessthan<Value>
+//    {
+//        bool bv;
+//        int  iv;
+//        char cv;
+//    public:
+//        typedef batgen::tuple_members<
+//            batgen::tuple_const_member<bool, Value, &Value::bv>,
+//            batgen::tuple_const_member<int,  Value, &Value::iv>,
+//            batgen::tuple_const_member<char, Value, &Value::cv>
+//        > tuple;
+//
+//        Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
+//    };
+//
+// The base class `batgen::tuple_lessthan<Value>` can [and probably should] be
+// `private`! The provided operators are non-member operators found via ADL.
 
 namespace BloombergLP {
     namespace batgen {
@@ -56,8 +80,17 @@ class BloombergLP::batgen::tuple_lessthan
             || (!(batgen::get<Index>(value1) < batgen::get<Index>(value0))
                 && tuple_lessthan<Type>::compare<Index + 1>(value0, value1));
     }
-    friend bool operator< (Type const& value0, Type const& value1) {
+    friend bool operator<  (Type const& value0, Type const& value1) {
         return tuple_lessthan<Type>::compare<0>(value0, value1);
+    }
+    friend bool operator<= (Type const& value0, Type const& value1) {
+        return !(value1 < value0);
+    }
+    friend bool operator>  (Type const& value0, Type const& value1) {
+        return value1 < value0;
+    }
+    friend bool operator>= (Type const& value0, Type const& value1) {
+        return !(value0 < value1);
     }
 };
 

@@ -51,23 +51,47 @@ namespace {
 
         Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
     };
+
+    struct Sizer {
+        bool bv;
+        int  iv;
+        char cv;
+    };
 }
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("breathing test", "[batgen::tuple_like]") {
+TEST_CASE("breathing test", "[batgen::tuple_equalto]") {
+    Value value(true,  17, 'a');
+
+    REQUIRE      (value == value);
+    REQUIRE_FALSE(value != value);
+}
+
+TEST_CASE("no size impact", "[batgen::tuple_equalto]") {
+    REQUIRE(sizeof(Value) == sizeof(Sizer));
+}
+
+TEST_CASE("difference in first member", "[batgen::tuple_equalto]") {
     Value value0(true,  17, 'a');
     Value value1(false, 17, 'a');
-    Value value2(true,  18, 'a');
-    Value value3(true,  17, 'b');
 
-    REQUIRE(value0 == value0);
-    REQUIRE(!(value0 != value0));
+    REQUIRE_FALSE(value0 == value1);
+    REQUIRE      (value0 != value1);
+}
 
-    REQUIRE(!(value0 == value1));
-    REQUIRE(value0 != value1);
-    REQUIRE(!(value0 == value2));
-    REQUIRE(value0 != value2);
-    REQUIRE(!(value0 == value3));
-    REQUIRE(value0 != value3);
+TEST_CASE("difference in second member", "[batgen::tuple_equalto]") {
+    Value value0(true, 17, 'a');
+    Value value1(true, 18, 'a');
+
+    REQUIRE_FALSE(value0 == value1);
+    REQUIRE      (value0 != value1);
+}
+
+TEST_CASE("difference in third member", "[batgen::tuple_equalto]") {
+    Value value0(true, 17, 'a');
+    Value value1(true, 17, 'b');
+
+    REQUIRE_FALSE(value0 == value1);
+    REQUIRE      (value0 != value1);
 }

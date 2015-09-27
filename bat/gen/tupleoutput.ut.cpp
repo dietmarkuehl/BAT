@@ -50,13 +50,23 @@ namespace {
 
         Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
     };
+
+    struct Sizer {
+        bool bv;
+        int  iv;
+        char cv;
+    };
 }
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("breathing test", "[batgen::tuple_like]") {
+TEST_CASE("breathing test", "[batgen::tuple_output]") {
     Value              value(true, 17, 'a');
     bsl::ostringstream out;
     out << bsl::boolalpha << value;
     REQUIRE(out.str() == "{ true, 17, a }");
+}
+
+TEST_CASE("no size impact", "[batgen::tuple_output]") {
+    REQUIRE(sizeof(Value) == sizeof(Sizer));
 }

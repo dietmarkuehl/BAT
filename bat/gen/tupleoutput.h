@@ -31,6 +31,31 @@
 #include <bslmf_enableif.h>
 
 // ----------------------------------------------------------------------------
+// The class template `batgen::tuple_output<T>` is used to provide an output
+// operator for `T` based on a tuple-like member declaration (see
+// `batgen::tuple`): simply derive from `batgen::tuple_output<T>` and provide
+// a member `typedef` named `tuple` listing the salient members of `T`. For
+// example:
+//
+//    class Value
+//        : private batgen::tuple_output<Value>
+//    {
+//        bool bv;
+//        int  iv;
+//        char cv;
+//    public:
+//        typedef batgen::tuple_members<
+//            batgen::tuple_const_member<bool, Value, &Value::bv>,
+//            batgen::tuple_const_member<int,  Value, &Value::iv>,
+//            batgen::tuple_const_member<char, Value, &Value::cv>
+//        > tuple;
+//
+//        Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
+//    };
+//
+// The base class `batgen::tuple_output<Value>` can [and probably should] be
+// `private`! The provided operators are non-member operators found via ADL.
+
 
 namespace BloombergLP {
     namespace batgen {
@@ -43,23 +68,25 @@ namespace BloombergLP {
 template <typename Type>
 class BloombergLP::batgen::tuple_output
 {
-    template <int Index, typename T>
+    template <int Index, typename cT, typename Traits, typename T>
     static
     typename bsl::enable_if<batgen::tuple_size<T>::value <= Index>::type
-    print(bsl::ostream&, T const&) {
+    print(bsl::basic_ostream<cT, Traits>&, T const&) {
     }
-    template <int Index, typename T>
+    template <int Index, typename cT, typename Traits, typename T>
     static
     typename bsl::enable_if<Index < batgen::tuple_size<T>::value>::type
-    print(bsl::ostream& out, T const& value) {
-        out << ' ' << batgen::get<Index>(value)
-            << (Index + 1 < batgen::tuple_size<Type>::value? ",": " ");
+    print(bsl::basic_ostream<cT, Traits>& out, T const& value) {
+        out << out.widen(' ') << batgen::get<Index>(value)
+            << out.widen(Index + 1 < batgen::tuple_size<Type>::value? ',': ' ');
         tuple_output<Type>::print<Index + 1>(out, value);
     }
-    friend bsl::ostream& operator<< (bsl::ostream& out, Type const& value) {
-        out << "{";
+    template <typename cT, typename Traits>
+    friend bsl::basic_ostream<cT, Traits>&
+    operator<< (bsl::basic_ostream<cT, Traits>& out, Type const& value) {
+        out << out.widen('{');
         tuple_output<Type>::print<0>(out, value);
-        return out << "}";
+        return out << out.widen('}');
     }
 };
 
