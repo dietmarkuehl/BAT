@@ -1,4 +1,4 @@
-// bat/gen/tuplevalue.ut.cpp                                          -*-C++-*-
+// bat/gen/tuplehash.cpp                                              -*-C++-*-
 // ----------------------------------------------------------------------------
 //  Copyright (C) 2015 Dietmar Kuehl http://www.dietmar-kuehl.de         
 //                                                                       
@@ -23,60 +23,4 @@
 //  OTHER DEALINGS IN THE SOFTWARE. 
 // ----------------------------------------------------------------------------
 
-#include "bat/gen/tuplevalue.h"
-#include "bat/gen/tuple.h"
-#include <bsl_iostream.h>
-#include <bsl_sstream.h>
-#include <bslh_hash.h>
-
-#define CATCH_CONFIG_MAIN
-#include <catch.hpp>
-
-using namespace BloombergLP;
-
-// ----------------------------------------------------------------------------
-
-namespace {
-    class Value
-        : private batgen::tuple_value<Value>
-    {
-        bool bv;
-        int  iv;
-        char cv;
-    public:
-        typedef batgen::tuple_members<
-            batgen::tuple_const_member<bool, Value, &Value::bv>,
-            batgen::tuple_const_member<int,  Value, &Value::iv>,
-            batgen::tuple_const_member<char, Value, &Value::cv>
-        > tuple;
-
-        Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
-    };
-
-    struct Sizer {
-        bool bv;
-        int  iv;
-        char cv;
-    };
-}
-
-// ----------------------------------------------------------------------------
-
-TEST_CASE("breathing test", "[batgen::tuple_value]") {
-    Value              value(true,  17, 'b');
-    bsl::ostringstream out;
-    out << bsl::boolalpha << value;
-
-    REQUIRE      (out.str() == "{ true, 17, b }");
-    REQUIRE      (value == value);
-    REQUIRE_FALSE(value != value);
-    REQUIRE_FALSE(value <  value);
-    REQUIRE      (value <= value);
-    REQUIRE_FALSE(value >  value);
-    REQUIRE      (value >= value);
-    REQUIRE      (bslh::Hash<>()(value) == bslh::Hash<>()(value));
-}
-
-TEST_CASE("no size impact", "[batgen::tuple_value]") {
-    REQUIRE(sizeof(Value) == sizeof(Sizer));
-}
+#include "bat/gen/tuplehash.h"

@@ -31,6 +31,7 @@ LIBCXXFILES += \
 	bat/gen/lessthan.cpp \
 	bat/gen/tuple.cpp \
 	bat/gen/tupleequalto.cpp \
+	bat/gen/tuplehash.cpp \
 	bat/gen/tuplelessthan.cpp \
 	bat/gen/tupleoutput.cpp \
 	bat/gen/tuplevalue.cpp \

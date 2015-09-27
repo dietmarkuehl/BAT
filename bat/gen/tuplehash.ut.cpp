@@ -1,4 +1,4 @@
-// bat/gen/tuplevalue.h                                               -*-C++-*-
+// bat/gen/tuplehash.ut.cpp                                           -*-C++-*-
 // ----------------------------------------------------------------------------
 //  Copyright (C) 2015 Dietmar Kuehl http://www.dietmar-kuehl.de         
 //                                                                       
@@ -23,63 +23,73 @@
 //  OTHER DEALINGS IN THE SOFTWARE. 
 // ----------------------------------------------------------------------------
 
-#ifndef INCLUDED_BAT_GEN_TUPLEVALUE
-#define INCLUDED_BAT_GEN_TUPLEVALUE
-
-#include "bat/gen/tupleequalto.h"
 #include "bat/gen/tuplehash.h"
-#include "bat/gen/tuplelessthan.h"
 #include "bat/gen/tupleoutput.h"
+#include "bat/gen/tuple.h"
+#include <bslh_hash.h>
+
+#define CATCH_CONFIG_MAIN
+#include <catch.hpp>
+
+using namespace BloombergLP;
 
 // ----------------------------------------------------------------------------
-// The class template `batgen::tuple_value<T>` is used to provide several value
-// operators for `T` based on a tuple-like member declaration (see
-// `batgen::tuple`): simply derive from `batgen::tuple_value<T>` and provide a
-// member `typedef` named `tuple` listing the salient members of `T`. The
-// operations provided are
-//  - output `operator<<()`
-//  - equality operators `operator==()` and `operator!=()`
-//  - relation operators `operator<()`, `operator>()`, `operator<=()`, and
-//    `operator>=()`
-//  - `hashAppend()` to compute a hash value
-// For example:
-//
-//    class Value
-//        : private batgen::tuple_value<Value>
-//    {
-//        bool bv;
-//        int  iv;
-//        char cv;
-//    public:
-//        typedef batgen::tuple_members<
-//            batgen::tuple_const_member<bool, Value, &Value::bv>,
-//            batgen::tuple_const_member<int,  Value, &Value::iv>,
-//            batgen::tuple_const_member<char, Value, &Value::cv>
-//        > tuple;
-//
-//        Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
-//    };
-//
-// The base class `batgen::tuple_value<Value>` can [and probably should] be
-// `private`! The provided operators are non-member operators found via ADL.
 
-namespace BloombergLP {
-    namespace batgen {
-        template <typename> class tuple_value;
-    }
+namespace {
+    class Value
+        : private batgen::tuple_hash<Value>
+        , private batgen::tuple_output<Value>
+    {
+        bool bv;
+        int  iv;
+        char cv;
+    public:
+        typedef batgen::tuple_members<
+            batgen::tuple_const_member<bool, Value, &Value::bv>,
+            batgen::tuple_const_member<int,  Value, &Value::iv>,
+            batgen::tuple_const_member<char, Value, &Value::cv>
+        > tuple;
+
+        Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
+    };
+
+    struct Sizer {
+        bool bv;
+        int  iv;
+        char cv;
+    };
 }
 
 // ----------------------------------------------------------------------------
 
-template <typename Type>
-class BloombergLP::batgen::tuple_value
-    : BloombergLP::batgen::tuple_equalto<Type>
-    , BloombergLP::batgen::tuple_hash<Type>
-    , BloombergLP::batgen::tuple_lessthan<Type>
-    , BloombergLP::batgen::tuple_output<Type>
-{
-};
+TEST_CASE("breathing test", "[batgen::tuple_hash]") {
+    Value value(true,  17, 'a');
 
-// ----------------------------------------------------------------------------
+    REQUIRE(bslh::Hash<>()(value) == bslh::Hash<>()(value));
+}
 
-#endif
+TEST_CASE("no size impact", "[batgen::tuple_hash]") {
+    REQUIRE(sizeof(Value) == sizeof(Sizer));
+}
+
+TEST_CASE("difference in first member", "[batgen::tuple_hash]") {
+    Value value0(true,  17, 'a');
+    Value value1(false, 17, 'a');
+
+    REQUIRE(bslh::Hash<>()(value0) != bslh::Hash<>()(value1));
+}
+
+TEST_CASE("difference in second member", "[batgen::tuple_hash]") {
+    Value value0(true, 17, 'a');
+    Value value1(true, 18, 'a');
+
+    REQUIRE(bslh::Hash<>()(value0) != bslh::Hash<>()(value1));
+}
+
+TEST_CASE("difference in third member", "[batgen::tuple_hash]") {
+    Value value0(true, 17, 'a');
+    Value value1(true, 17, 'b');
+
+    REQUIRE(bslh::Hash<>()(value0) != bslh::Hash<>()(value1));
+}
+

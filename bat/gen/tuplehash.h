@@ -1,4 +1,4 @@
-// bat/gen/tuplevalue.h                                               -*-C++-*-
+// bat/gen/tuplehash.h                                                -*-C++-*-
 // ----------------------------------------------------------------------------
 //  Copyright (C) 2015 Dietmar Kuehl http://www.dietmar-kuehl.de         
 //                                                                       
@@ -23,29 +23,21 @@
 //  OTHER DEALINGS IN THE SOFTWARE. 
 // ----------------------------------------------------------------------------
 
-#ifndef INCLUDED_BAT_GEN_TUPLEVALUE
-#define INCLUDED_BAT_GEN_TUPLEVALUE
+#ifndef INCLUDED_BAT_GEN_TUPLEHASH
+#define INCLUDED_BAT_GEN_TUPLEHASH
 
-#include "bat/gen/tupleequalto.h"
-#include "bat/gen/tuplehash.h"
-#include "bat/gen/tuplelessthan.h"
-#include "bat/gen/tupleoutput.h"
+#include "bat/gen/tuple.h"
+#include <bslh_hash.h>
+#include <bslmf_enableif.h>
 
 // ----------------------------------------------------------------------------
-// The class template `batgen::tuple_value<T>` is used to provide several value
-// operators for `T` based on a tuple-like member declaration (see
-// `batgen::tuple`): simply derive from `batgen::tuple_value<T>` and provide a
-// member `typedef` named `tuple` listing the salient members of `T`. The
-// operations provided are
-//  - output `operator<<()`
-//  - equality operators `operator==()` and `operator!=()`
-//  - relation operators `operator<()`, `operator>()`, `operator<=()`, and
-//    `operator>=()`
-//  - `hashAppend()` to compute a hash value
-// For example:
+// The class template `batgen::tuple_hash<T>` is used to provide a hash value
+// for `T` based on a tuple-like member declaration (see `batgen::tuple`):
+// simply derive from `batgen::tuple_hash<T>` and provide a member `typedef`
+// named `tuple` listing the salient members of `T`. For example:
 //
 //    class Value
-//        : private batgen::tuple_value<Value>
+//        : private batgen::tuple_hash<Value>
 //    {
 //        bool bv;
 //        int  iv;
@@ -60,24 +52,38 @@
 //        Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
 //    };
 //
-// The base class `batgen::tuple_value<Value>` can [and probably should] be
+// The base class `batgen::tuple_hash<Value>` can [and probably should] be
 // `private`! The provided operators are non-member operators found via ADL.
+
 
 namespace BloombergLP {
     namespace batgen {
-        template <typename> class tuple_value;
+        template <typename> class tuple_hash;
     }
 }
 
 // ----------------------------------------------------------------------------
 
 template <typename Type>
-class BloombergLP::batgen::tuple_value
-    : BloombergLP::batgen::tuple_equalto<Type>
-    , BloombergLP::batgen::tuple_hash<Type>
-    , BloombergLP::batgen::tuple_lessthan<Type>
-    , BloombergLP::batgen::tuple_output<Type>
+class BloombergLP::batgen::tuple_hash
 {
+    template <int Index, typename Algorithm, typename T>
+    static
+    typename bsl::enable_if<batgen::tuple_size<T>::value <= Index>::type
+    append(Algorithm&, T const&) {
+    }
+    template <int Index, typename Algorithm, typename T>
+    static
+    typename bsl::enable_if<Index < batgen::tuple_size<T>::value>::type
+    append(Algorithm& algorithm, T const& value) {
+        using bslh::hashAppend;
+        hashAppend(algorithm, batgen::get<Index>(value));
+        tuple_hash<Type>::append<Index + 1>(algorithm, value);
+    }
+    template <typename Algorithm>
+    friend void hashAppend(Algorithm& algorithm, Type const& value) {
+        tuple_hash<Type>::append<0>(algorithm, value);
+    }
 };
 
 // ----------------------------------------------------------------------------
