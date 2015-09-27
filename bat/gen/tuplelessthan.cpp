@@ -1,4 +1,4 @@
-// bat/gen/tupleless.cpp                                              -*-C++-*-
+// bat/gen/tuplelessthan.cpp                                          -*-C++-*-
 // ----------------------------------------------------------------------------
 //  Copyright (C) 2015 Dietmar Kuehl http://www.dietmar-kuehl.de         
 //                                                                       
@@ -23,4 +23,4 @@
 //  OTHER DEALINGS IN THE SOFTWARE. 
 // ----------------------------------------------------------------------------
 
-#include "bat/gen/tupleless.h"
+#include "bat/gen/tuplelessthan.h"

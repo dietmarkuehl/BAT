@@ -1,4 +1,4 @@
-// bat/gen/tupleless.ut.cpp                                           -*-C++-*-
+// bat/gen/tuplelessthan.h                                            -*-C++-*-
 // ----------------------------------------------------------------------------
 //  Copyright (C) 2015 Dietmar Kuehl http://www.dietmar-kuehl.de         
 //                                                                       
@@ -23,51 +23,43 @@
 //  OTHER DEALINGS IN THE SOFTWARE. 
 // ----------------------------------------------------------------------------
 
-#include "bat/gen/tupleless.h"
+#ifndef INCLUDED_BAT_GEN_TUPLELESSTHAN
+#define INCLUDED_BAT_GEN_TUPLELESSTHAN
+
 #include "bat/gen/tuple.h"
-#include "bat/gen/tupleoutput.h"
-
-#define CATCH_CONFIG_MAIN
-#include <catch.hpp>
-
-using namespace BloombergLP;
+#include <bslmf_enableif.h>
 
 // ----------------------------------------------------------------------------
 
-namespace {
-    class Value
-        : private batgen::tuple_less<Value>
-        , private batgen::tuple_output<Value>
-    {
-        bool bv;
-        int  iv;
-        char cv;
-    public:
-        typedef batgen::tuple_members<
-            batgen::tuple_const_member<bool, Value, &Value::bv>,
-            batgen::tuple_const_member<int,  Value, &Value::iv>,
-            batgen::tuple_const_member<char, Value, &Value::cv>,
-        void
-        > tuple;
+namespace BloombergLP {
+    namespace batgen {
+        template <typename> class tuple_lessthan;
 
-        Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
-    };
+        template <int Index, typename Type>
+        typename bsl::enable_if<batgen::tuple_size<Type>::value <= Index, bool>::type
+        tuple_lessthan_element(Type const&, Type const&) {
+            return false;
+        }
+        template <int Index, typename Type>
+        typename bsl::enable_if<Index < batgen::tuple_size<Type>::value, bool>::type
+        tuple_lessthan_element(Type const& value0, Type const& value1) {
+            return batgen::get<Index>(value0) < batgen::get<Index>(value1)
+                || (!(batgen::get<Index>(value1) < batgen::get<Index>(value0))
+                    && tuple_lessthan_element<Index + 1>(value0, value1));
+        }
+    }
 }
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("breathing test", "[batgen::tuple_like]") {
-    Value value0(true,  17, 'b');
-    Value value1(false, 17, 'b');
-    Value value2(true,  16, 'b');
-    Value value3(true,  17, 'a');
+template <typename Type>
+class BloombergLP::batgen::tuple_lessthan
+{
+    friend bool operator< (Type const& value0, Type const& value1) {
+        return batgen::tuple_lessthan_element<0>(value0, value1);
+    }
+};
 
-    REQUIRE_FALSE(value0 < value0);
+// ----------------------------------------------------------------------------
 
-    REQUIRE_FALSE(value0 < value1);
-    REQUIRE      (value1 < value0);
-    REQUIRE_FALSE(value0 < value2);
-    REQUIRE      (value2 < value0);
-    REQUIRE_FALSE(value0 < value3);
-    REQUIRE      (value3 < value0);
-}
+#endif

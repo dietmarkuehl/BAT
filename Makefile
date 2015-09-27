@@ -31,7 +31,7 @@ LIBCXXFILES += \
 	bat/gen/lessthan.cpp \
 	bat/gen/tuple.cpp \
 	bat/gen/tupleequalto.cpp \
-	bat/gen/tupleless.cpp \
+	bat/gen/tuplelessthan.cpp \
 	bat/gen/tupleoutput.cpp \
 	bat/ma/allocator.cpp \
 	bat/mf/isbaseof.cpp \
