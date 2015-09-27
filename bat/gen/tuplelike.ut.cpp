@@ -1,4 +1,4 @@
-// bat/gen/tupleoutput.t.cpp                                          -*-C++-*-
+// bat/gen/tuplelike.t.cpp                                            -*-C++-*-
 // ----------------------------------------------------------------------------
 //  Copyright (C) 2015 Dietmar Kuehl http://www.dietmar-kuehl.de         
 //                                                                       
@@ -23,10 +23,8 @@
 //  OTHER DEALINGS IN THE SOFTWARE. 
 // ----------------------------------------------------------------------------
 
-#include "bat/gen/tupleoutput.h"
 #include "bat/gen/tuplelike.h"
 #include <bsl_iostream.h>
-#include <bsl_sstream.h>
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
@@ -36,8 +34,7 @@ using namespace BloombergLP;
 // ----------------------------------------------------------------------------
 
 namespace {
-    class Value
-        : private batgen::tuple_output<Value> {
+    class Value {
         bool bv;
         int  iv;
         char cv;
@@ -54,9 +51,12 @@ namespace {
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("breating test", "[batgen::tuple_like]") {
-    Value              value(true, 17, 'a');
-    bsl::ostringstream out;
-    out << bsl::boolalpha << value;
-    REQUIRE(out.str() == "{ true, 17, a }");
+TEST_CASE("breathing test", "[batgen::tuple_like]") {
+    REQUIRE(batgen::tuple_size<Value>::value == 3);
+
+    Value value(true, 17, 'a');
+
+    REQUIRE(batgen::get<0>(value));
+    REQUIRE(batgen::get<1>(value) == 17);
+    REQUIRE(batgen::get<2>(value) == 'a');
 }

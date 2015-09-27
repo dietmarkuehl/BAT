@@ -30,6 +30,7 @@ LIBCXXFILES += \
 	bat/gen/equalto.cpp \
 	bat/gen/lessthan.cpp \
 	bat/gen/tupleequalto.cpp \
+	bat/gen/tupleless.cpp \
 	bat/gen/tuplelike.cpp \
 	bat/gen/tupleoutput.cpp \
 	bat/ma/allocator.cpp \
@@ -38,7 +39,7 @@ LIBCXXFILES += \
 # LIBCXXFILES = bat/gen/tupleoutput.cpp
 
 LIBOFILES    = $(LIBCXXFILES:%.cpp=$(BINDIR)/%.o)
-TESTCXXFILES = $(LIBCXXFILES:%.cpp=%.t.cpp)
+TESTCXXFILES = $(LIBCXXFILES:%.cpp=%.ut.cpp)
 
 CXXFILES = $(LIBCXXFILES) $(TESTCXXFILES)
 
@@ -49,7 +50,7 @@ default: check
 lib: $(BINDIR)/lib$(NAME).a
 
 .PHONY: check
-check: $(TESTCXXFILES:%.cpp=$(BINDIR)/%)
+check: $(TESTCXXFILES:%.cpp=$(BINDIR)/%.o) $(TESTCXXFILES:%.cpp=$(BINDIR)/%)
 	@for f in $(TESTCXXFILES:%.cpp=%); \
 	do \
 	    echo running $(BINDIR)/$$f; \
@@ -66,7 +67,7 @@ $(BINDIR)/%.o: %.cpp
 	@mkdir -p $(@D)
 	$(CXX) -o $@ $(CPPFLAGS) $(CXXFLAGS) -c $(@:$(BINDIR)/%.o=%.cpp)
 
-$(BINDIR)/%.t: $(BINDIR)/%.t.o lib
+$(BINDIR)/%.ut: $(BINDIR)/%.ut.o lib
 	@mkdir -p $(@D)
 	$(CXX) -o $@ $(LDFLAGS) $(@:%=%.o) $(LDLIBS)
 

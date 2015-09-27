@@ -1,4 +1,4 @@
-// bat/gen/tupleequalto.t.cpp                                         -*-C++-*-
+// bat/gen/tupleless.ut.cpp                                           -*-C++-*-
 // ----------------------------------------------------------------------------
 //  Copyright (C) 2015 Dietmar Kuehl http://www.dietmar-kuehl.de         
 //                                                                       
@@ -23,8 +23,9 @@
 //  OTHER DEALINGS IN THE SOFTWARE. 
 // ----------------------------------------------------------------------------
 
-#include "bat/gen/tupleequalto.h"
+#include "bat/gen/tupleless.h"
 #include "bat/gen/tuplelike.h"
+#include "bat/gen/tupleoutput.h"
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
@@ -35,15 +36,18 @@ using namespace BloombergLP;
 
 namespace {
     class Value
-        : private batgen::tuple_equalto<Value> {
+        : private batgen::tuple_less<Value>
+        , private batgen::tuple_output<Value>
+    {
         bool bv;
         int  iv;
         char cv;
     public:
         typedef batgen::elements<
-            batgen::const_element<bool, Value, &Value::bv>,
-            batgen::const_element<int,  Value, &Value::iv>,
-            batgen::const_element<char, Value, &Value::cv>
+        batgen::const_element<bool, Value, &Value::bv>,
+        batgen::const_element<int,  Value, &Value::iv>,
+        batgen::const_element<char, Value, &Value::cv>,
+        void
         > tuple;
 
         Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
@@ -52,19 +56,18 @@ namespace {
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("breating test", "[batgen::tuple_like]") {
-    Value value0(true,  17, 'a');
-    Value value1(false, 17, 'a');
-    Value value2(true,  18, 'a');
-    Value value3(true,  17, 'b');
+TEST_CASE("breathing test", "[batgen::tuple_like]") {
+    Value value0(true,  17, 'b');
+    Value value1(false, 17, 'b');
+    Value value2(true,  16, 'b');
+    Value value3(true,  17, 'a');
 
-    REQUIRE(value0 == value0);
-    REQUIRE(!(value0 != value0));
+    REQUIRE_FALSE(value0 < value0);
 
-    REQUIRE(!(value0 == value1));
-    REQUIRE(value0 != value1);
-    REQUIRE(!(value0 == value2));
-    REQUIRE(value0 != value2);
-    REQUIRE(!(value0 == value3));
-    REQUIRE(value0 != value3);
+    REQUIRE_FALSE(value0 < value1);
+    REQUIRE      (value1 < value0);
+    REQUIRE_FALSE(value0 < value2);
+    REQUIRE      (value2 < value0);
+    REQUIRE_FALSE(value0 < value3);
+    REQUIRE      (value3 < value0);
 }
