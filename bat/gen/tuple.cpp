@@ -1,4 +1,4 @@
-// bat/gen/tuplelike.cpp                                              -*-C++-*-
+// bat/gen/tuple.cpp                                                  -*-C++-*-
 // ----------------------------------------------------------------------------
 //  Copyright (C) 2015 Dietmar Kuehl http://www.dietmar-kuehl.de         
 //                                                                       
@@ -23,4 +23,4 @@
 //  OTHER DEALINGS IN THE SOFTWARE. 
 // ----------------------------------------------------------------------------
 
-#include "bat/gen/tuplelike.h"
+#include "bat/gen/tuple.h"

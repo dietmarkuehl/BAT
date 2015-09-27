@@ -1,4 +1,4 @@
-// bat/gen/tuplelike.h                                                -*-C++-*-
+// bat/gen/tuple.h                                                    -*-C++-*-
 // ----------------------------------------------------------------------------
 //  Copyright (C) 2015 Dietmar Kuehl http://www.dietmar-kuehl.de         
 //                                                                       
@@ -23,8 +23,8 @@
 //  OTHER DEALINGS IN THE SOFTWARE. 
 // ----------------------------------------------------------------------------
 
-#ifndef INCLUDED_BAT_GEN_TUPLELIKE
-#define INCLUDED_BAT_GEN_TUPLELIKE
+#ifndef INCLUDED_BAT_GEN_TUPLE
+#define INCLUDED_BAT_GEN_TUPLE
 
 #include <bslmf_issame.h>
 
@@ -33,25 +33,21 @@
 namespace BloombergLP {
     namespace batgen {
         template <typename Type, typename Struct, Type Struct::*Member>
-        struct element {
+        struct tuple_member {
             typedef Type  type;
             static type&       get(Struct& s)       { return s.*Member; }
             static type const& get(Struct const& s) { return s.*Member; }
         };
         template <typename Type, typename Struct, Type Struct::*Member>
-        struct const_element {
+        struct tuple_const_member {
             typedef Type const type;
             static type const& get(Struct const& s) { return s.*Member; }
         };
-        template <typename T0 = void,
-                  typename T1 = void,
-                  typename T2 = void,
-                  typename T3 = void,
-                  typename T4 = void,
-                  typename T5 = void,
-                  typename T6 = void,
-                  typename T7 = void>
-        struct elements {
+        template <typename T0 = void, typename T1 = void,
+                  typename T2 = void, typename T3 = void,
+                  typename T4 = void, typename T5 = void,
+                  typename T6 = void, typename T7 = void>
+        struct tuple_members {
             enum { size = 0
                    + !bsl::is_same<void, T0>::value
                    + !bsl::is_same<void, T1>::value
@@ -63,45 +59,45 @@ namespace BloombergLP {
                    + !bsl::is_same<void, T7>::value
             };
         };
-        template <int Index, typename Elements> struct tuple_element;
+        template <int Index, typename Members> struct tuple_element;
         template <typename T0, typename T1, typename T2, typename T3,
                   typename T4, typename T5, typename T6, typename T7>
-        struct tuple_element<0, elements<T0, T1, T2, T3, T4, T5, T6, T7> > {
+        struct tuple_element<0, tuple_members<T0, T1, T2, T3, T4, T5, T6, T7> > {
             typedef T0 type;
         };
         template <typename T0, typename T1, typename T2, typename T3,
                   typename T4, typename T5, typename T6, typename T7>
-        struct tuple_element<1, elements<T0, T1, T2, T3, T4, T5, T6, T7> > {
+        struct tuple_element<1, tuple_members<T0, T1, T2, T3, T4, T5, T6, T7> > {
             typedef T1 type;
         };
         template <typename T0, typename T1, typename T2, typename T3,
                   typename T4, typename T5, typename T6, typename T7>
-        struct tuple_element<2, elements<T0, T1, T2, T3, T4, T5, T6, T7> > {
+        struct tuple_element<2, tuple_members<T0, T1, T2, T3, T4, T5, T6, T7> > {
             typedef T2 type;
         };
         template <typename T0, typename T1, typename T2, typename T3,
                   typename T4, typename T5, typename T6, typename T7>
-        struct tuple_element<3, elements<T0, T1, T2, T3, T4, T5, T6, T7> > {
+        struct tuple_element<3, tuple_members<T0, T1, T2, T3, T4, T5, T6, T7> > {
             typedef T3 type;
         };
         template <typename T0, typename T1, typename T2, typename T3,
                   typename T4, typename T5, typename T6, typename T7>
-        struct tuple_element<4, elements<T0, T1, T2, T3, T4, T5, T6, T7> > {
+        struct tuple_element<4, tuple_members<T0, T1, T2, T3, T4, T5, T6, T7> > {
             typedef T4 type;
         };
         template <typename T0, typename T1, typename T2, typename T3,
                   typename T4, typename T5, typename T6, typename T7>
-        struct tuple_element<5, elements<T0, T1, T2, T3, T4, T5, T6, T7> > {
+        struct tuple_element<5, tuple_members<T0, T1, T2, T3, T4, T5, T6, T7> > {
             typedef T5 type;
         };
         template <typename T0, typename T1, typename T2, typename T3,
                   typename T4, typename T5, typename T6, typename T7>
-        struct tuple_element<6, elements<T0, T1, T2, T3, T4, T5, T6, T7> > {
+        struct tuple_element<6, tuple_members<T0, T1, T2, T3, T4, T5, T6, T7> > {
             typedef T6 type;
         };
         template <typename T0, typename T1, typename T2, typename T3,
                   typename T4, typename T5, typename T6, typename T7>
-        struct tuple_element<7, elements<T0, T1, T2, T3, T4, T5, T6, T7> > {
+        struct tuple_element<7, tuple_members<T0, T1, T2, T3, T4, T5, T6, T7> > {
             typedef T7 type;
         };
 

@@ -26,7 +26,7 @@
 #ifndef INCLUDED_BAT_GEN_TUPLEOUTPUT
 #define INCLUDED_BAT_GEN_TUPLEOUTPUT
 
-#include "bat/gen/tuplelike.h"
+#include "bat/gen/tuple.h"
 #include <bsl_ostream.h>
 #include <bslmf_enableif.h>
 

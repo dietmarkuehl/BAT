@@ -26,7 +26,7 @@
 #ifndef INCLUDED_BAT_GEN_TUPLELESS
 #define INCLUDED_BAT_GEN_TUPLELESS
 
-#include "bat/gen/tuplelike.h"
+#include "bat/gen/tuple.h"
 #include <bslmf_enableif.h>
 
 // ----------------------------------------------------------------------------

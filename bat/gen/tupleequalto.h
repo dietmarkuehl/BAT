@@ -26,7 +26,7 @@
 #ifndef INCLUDED_BAT_GEN_TUPLEEQUALTO
 #define INCLUDED_BAT_GEN_TUPLEEQUALTO
 
-#include "bat/gen/tuplelike.h"
+#include "bat/gen/tuple.h"
 #include <bslmf_enableif.h>
 
 // ----------------------------------------------------------------------------

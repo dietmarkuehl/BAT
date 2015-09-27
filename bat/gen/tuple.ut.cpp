@@ -1,4 +1,4 @@
-// bat/gen/tuplelike.t.cpp                                            -*-C++-*-
+// bat/gen/tuple.t.cpp                                                -*-C++-*-
 // ----------------------------------------------------------------------------
 //  Copyright (C) 2015 Dietmar Kuehl http://www.dietmar-kuehl.de         
 //                                                                       
@@ -23,7 +23,7 @@
 //  OTHER DEALINGS IN THE SOFTWARE. 
 // ----------------------------------------------------------------------------
 
-#include "bat/gen/tuplelike.h"
+#include "bat/gen/tuple.h"
 #include <bsl_iostream.h>
 
 #define CATCH_CONFIG_MAIN
@@ -39,10 +39,10 @@ namespace {
         int  iv;
         char cv;
     public:
-        typedef batgen::elements<
-            batgen::const_element<bool, Value, &Value::bv>,
-            batgen::const_element<int,  Value, &Value::iv>,
-            batgen::const_element<char, Value, &Value::cv>
+        typedef batgen::tuple_members<
+            batgen::tuple_const_member<bool, Value, &Value::bv>,
+            batgen::tuple_const_member<int,  Value, &Value::iv>,
+            batgen::tuple_const_member<char, Value, &Value::cv>
         > tuple;
 
         Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
@@ -51,7 +51,7 @@ namespace {
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("breathing test", "[batgen::tuple_like]") {
+TEST_CASE("breathing test", "[batgen::tuple]") {
     REQUIRE(batgen::tuple_size<Value>::value == 3);
 
     Value value(true, 17, 'a');
