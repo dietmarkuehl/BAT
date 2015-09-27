@@ -35,28 +35,30 @@
 namespace BloombergLP {
     namespace batgen {
         template <typename> class tuple_output;
-
-        template <int Index, typename Type>
-        typename bsl::enable_if<batgen::tuple_size<Type>::value <= Index>::type
-        tuple_output_print(bsl::ostream&, Type const&) {
-        }
-        template <int Index, typename Type>
-        typename bsl::enable_if<Index < batgen::tuple_size<Type>::value>::type
-        tuple_output_print(bsl::ostream& out, Type const& value) {
-            out << ' ' << batgen::get<Index>(value)
-                << (Index + 1 < batgen::tuple_size<Type>::value? ",": " ");
-            tuple_output_print<Index + 1>(out, value);
-        }
     }
 }
 
 // ----------------------------------------------------------------------------
 
 template <typename Type>
-class BloombergLP::batgen::tuple_output {
+class BloombergLP::batgen::tuple_output
+{
+    template <int Index, typename T>
+    static
+    typename bsl::enable_if<batgen::tuple_size<T>::value <= Index>::type
+    print(bsl::ostream&, T const&) {
+    }
+    template <int Index, typename T>
+    static
+    typename bsl::enable_if<Index < batgen::tuple_size<T>::value>::type
+    print(bsl::ostream& out, T const& value) {
+        out << ' ' << batgen::get<Index>(value)
+            << (Index + 1 < batgen::tuple_size<Type>::value? ",": " ");
+        tuple_output<Type>::print<Index + 1>(out, value);
+    }
     friend bsl::ostream& operator<< (bsl::ostream& out, Type const& value) {
         out << "{";
-        tuple_output_print<0>(out, value);
+        tuple_output<Type>::print<0>(out, value);
         return out << "}";
     }
 };

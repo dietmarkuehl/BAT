@@ -34,19 +34,6 @@
 namespace BloombergLP {
     namespace batgen {
         template <typename> class tuple_lessthan;
-
-        template <int Index, typename Type>
-        typename bsl::enable_if<batgen::tuple_size<Type>::value <= Index, bool>::type
-        tuple_lessthan_element(Type const&, Type const&) {
-            return false;
-        }
-        template <int Index, typename Type>
-        typename bsl::enable_if<Index < batgen::tuple_size<Type>::value, bool>::type
-        tuple_lessthan_element(Type const& value0, Type const& value1) {
-            return batgen::get<Index>(value0) < batgen::get<Index>(value1)
-                || (!(batgen::get<Index>(value1) < batgen::get<Index>(value0))
-                    && tuple_lessthan_element<Index + 1>(value0, value1));
-        }
     }
 }
 
@@ -55,8 +42,22 @@ namespace BloombergLP {
 template <typename Type>
 class BloombergLP::batgen::tuple_lessthan
 {
+    template <int Index, typename T>
+    static
+    typename bsl::enable_if<batgen::tuple_size<T>::value <= Index, bool>::type
+    compare(T const&, T const&) {
+        return false;
+    }
+    template <int Index, typename T>
+    static
+    typename bsl::enable_if<Index < batgen::tuple_size<T>::value, bool>::type
+    compare(T const& value0, T const& value1) {
+        return batgen::get<Index>(value0) < batgen::get<Index>(value1)
+            || (!(batgen::get<Index>(value1) < batgen::get<Index>(value0))
+                && tuple_lessthan<Type>::compare<Index + 1>(value0, value1));
+    }
     friend bool operator< (Type const& value0, Type const& value1) {
-        return batgen::tuple_lessthan_element<0>(value0, value1);
+        return tuple_lessthan<Type>::compare<0>(value0, value1);
     }
 };
 
