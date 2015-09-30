@@ -37,15 +37,15 @@ using namespace BloombergLP;
 
 namespace {
     class Value
-        : private batgen::tuple_output<Value> {
+        : private batgen::TupleOutput<Value> {
         bool bv;
         int  iv;
         char cv;
     public:
-        typedef batgen::tuple_members<
-            batgen::tuple_const_member<bool, Value, &Value::bv>,
-            batgen::tuple_const_member<int,  Value, &Value::iv>,
-            batgen::tuple_const_member<char, Value, &Value::cv>
+        typedef batgen::TupleMembers<
+            batgen::TupleConstMember<bool, Value, &Value::bv>,
+            batgen::TupleConstMember<int,  Value, &Value::iv>,
+            batgen::TupleConstMember<char, Value, &Value::cv>
         > tuple;
 
         Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
@@ -60,13 +60,13 @@ namespace {
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("breathing test", "[batgen::tuple_output]") {
+TEST_CASE("breathing test", "[batgen::TupleOutput]") {
     Value              value(true, 17, 'a');
     bsl::ostringstream out;
     out << bsl::boolalpha << value;
     REQUIRE(out.str() == "{ true, 17, a }");
 }
 
-TEST_CASE("no size impact", "[batgen::tuple_output]") {
+TEST_CASE("no size impact", "[batgen::TupleOutput]") {
     REQUIRE(sizeof(Value) == sizeof(Sizer));
 }

@@ -33,28 +33,28 @@
 
 namespace BloombergLP {
     namespace batgen {
-        template <typename T> struct less_than;
+        template <typename T> struct LessThan;
     }
 }
 
 // ----------------------------------------------------------------------------
 
 template <typename Type>
-struct BloombergLP::batgen::less_than {
+struct BloombergLP::batgen::LessThan {
     friend bool operator< (Type const& value0, Type const& value1) {
-        return value0.less_than(value1);
+        return value0.lessThan(value1);
     }
 
     friend bool operator<= (Type const& value0, Type const& value1) {
-        return !value1.less_than(value0);
+        return !value1.lessThan(value0);
     }
 
     friend bool operator> (Type const& value0, Type const& value1) {
-        return value1.less_than(value0);
+        return value1.lessThan(value0);
     }
 
     friend bool operator>= (Type const& value0, Type const& value1) {
-        return !value0.less_than(value1);
+        return !value0.lessThan(value1);
     }
 };
 

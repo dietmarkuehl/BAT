@@ -27,26 +27,26 @@
 #define INCLUDED_BATGEN_EQUALTO
 
 // ----------------------------------------------------------------------------
-// The class template `equal_to` is use to tag a type as providing an equality
+// The class template `EqualTo` is use to tag a type as providing an equality
 // operation. A class providing an equality operation could derive from it to
 // get the inequality operation provided based on the equality. If the class
-// `Type` deriving from `equal_to<Type>` doesn't provide an equality operator,
-// it is assumed that there is a member operation `equal_to()` which can be
+// `Type` deriving from `EqualTo<Type>` doesn't provide an equality operator,
+// it is assumed that there is a member operation `EqualTo()` which can be
 // used to implement the equality operation.
 
 namespace BloombergLP {
     namespace batgen {
-        template <typename Type> struct equal_to;
+        template <typename Type> struct EqualTo;
     }
 }
 
 // ----------------------------------------------------------------------------
 
 template <typename Type>
-struct BloombergLP::batgen::equal_to {
+struct BloombergLP::batgen::EqualTo {
     friend bool
     operator== (Type const& value0, Type const& value1) {
-        return value0.equal_to(value1);
+        return value0.equalTo(value1);
     }
 
     friend bool

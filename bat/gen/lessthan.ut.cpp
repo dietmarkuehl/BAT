@@ -36,13 +36,13 @@ using namespace BloombergLP;
 
 namespace {
     class Value
-        : private batgen::less_than<Value> {
+        : private batgen::LessThan<Value> {
     private:
         int d_value;
 
     public:
         explicit Value(int value): d_value(value) {}
-        bool less_than(Value const& other) const {
+        bool lessThan(Value const& other) const {
             return this->d_value < other.d_value;
         }
         int value() const { return this->d_value; }
@@ -55,7 +55,7 @@ namespace {
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("breathing test", "[batgen::less_than]") {
+TEST_CASE("breathing test", "[batgen::LessThan]") {
     Value v1(1), v2(2);
 
     REQUIRE(v1 <  v2);

@@ -30,58 +30,58 @@
 #include <bslmf_enableif.h>
 
 // ----------------------------------------------------------------------------
-// The class template `batgen::tuple_lessthan<T>` is used to provide relational
+// The class template `batgen::TupleLessThan<T>` is used to provide relational
 // operators for `T` based on a tuple-like member declaration (see
-// `batgen::tuple`): simply derive from `batgen::tuple_lessthan<T>` and provide
+// `batgen::tuple`): simply derive from `batgen::TupleLessThan<T>` and provide
 // a member `typedef` named `tuple` listing the salient members of `T`. For
 // example:
 //
 //    class Value
-//        : private batgen::tuple_lessthan<Value>
+//        : private batgen::TupleLessThan<Value>
 //    {
 //        bool bv;
 //        int  iv;
 //        char cv;
 //    public:
-//        typedef batgen::tuple_members<
-//            batgen::tuple_const_member<bool, Value, &Value::bv>,
-//            batgen::tuple_const_member<int,  Value, &Value::iv>,
-//            batgen::tuple_const_member<char, Value, &Value::cv>
+//        typedef batgen::TupleMembers<
+//            batgen::TupleConstMember<bool, Value, &Value::bv>,
+//            batgen::TupleConstMember<int,  Value, &Value::iv>,
+//            batgen::TupleConstMember<char, Value, &Value::cv>
 //        > tuple;
 //
 //        Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
 //    };
 //
-// The base class `batgen::tuple_lessthan<Value>` can [and probably should] be
+// The base class `batgen::TupleLessThan<Value>` can [and probably should] be
 // `private`! The provided operators are non-member operators found via ADL.
 
 namespace BloombergLP {
     namespace batgen {
-        template <typename> class tuple_lessthan;
+        template <typename> class TupleLessThan;
     }
 }
 
 // ----------------------------------------------------------------------------
 
 template <typename Type>
-class BloombergLP::batgen::tuple_lessthan
+class BloombergLP::batgen::TupleLessThan
 {
     template <int Index, typename T>
     static
-    typename bsl::enable_if<batgen::tuple_size<T>::value <= Index, bool>::type
+    typename bsl::enable_if<batgen::TupleSize<T>::value <= Index, bool>::type
     compare(T const&, T const&) {
         return false;
     }
     template <int Index, typename T>
     static
-    typename bsl::enable_if<Index < batgen::tuple_size<T>::value, bool>::type
+    typename bsl::enable_if<Index < batgen::TupleSize<T>::value, bool>::type
     compare(T const& value0, T const& value1) {
         return batgen::get<Index>(value0) < batgen::get<Index>(value1)
             || (!(batgen::get<Index>(value1) < batgen::get<Index>(value0))
-                && tuple_lessthan<Type>::compare<Index + 1>(value0, value1));
+                && TupleLessThan<Type>::compare<Index + 1>(value0, value1));
     }
     friend bool operator<  (Type const& value0, Type const& value1) {
-        return tuple_lessthan<Type>::compare<0>(value0, value1);
+        return TupleLessThan<Type>::compare<0>(value0, value1);
     }
     friend bool operator<= (Type const& value0, Type const& value1) {
         return !(value1 < value0);

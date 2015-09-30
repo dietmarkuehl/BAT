@@ -37,17 +37,17 @@ using namespace BloombergLP;
 
 namespace {
     class Value
-        : private batgen::tuple_hash<Value>
-        , private batgen::tuple_output<Value>
+        : private batgen::TupleHash<Value>
+        , private batgen::TupleOutput<Value>
     {
         bool bv;
         int  iv;
         char cv;
     public:
-        typedef batgen::tuple_members<
-            batgen::tuple_const_member<bool, Value, &Value::bv>,
-            batgen::tuple_const_member<int,  Value, &Value::iv>,
-            batgen::tuple_const_member<char, Value, &Value::cv>
+        typedef batgen::TupleMembers<
+            batgen::TupleConstMember<bool, Value, &Value::bv>,
+            batgen::TupleConstMember<int,  Value, &Value::iv>,
+            batgen::TupleConstMember<char, Value, &Value::cv>
         > tuple;
 
         Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
@@ -62,31 +62,31 @@ namespace {
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("breathing test", "[batgen::tuple_hash]") {
+TEST_CASE("breathing test", "[batgen::TupleHash]") {
     Value value(true,  17, 'a');
 
     REQUIRE(bslh::Hash<>()(value) == bslh::Hash<>()(value));
 }
 
-TEST_CASE("no size impact", "[batgen::tuple_hash]") {
+TEST_CASE("no size impact", "[batgen::TupleHash]") {
     REQUIRE(sizeof(Value) == sizeof(Sizer));
 }
 
-TEST_CASE("difference in first member", "[batgen::tuple_hash]") {
+TEST_CASE("difference in first member", "[batgen::TupleHash]") {
     Value value0(true,  17, 'a');
     Value value1(false, 17, 'a');
 
     REQUIRE(bslh::Hash<>()(value0) != bslh::Hash<>()(value1));
 }
 
-TEST_CASE("difference in second member", "[batgen::tuple_hash]") {
+TEST_CASE("difference in second member", "[batgen::TupleHash]") {
     Value value0(true, 17, 'a');
     Value value1(true, 18, 'a');
 
     REQUIRE(bslh::Hash<>()(value0) != bslh::Hash<>()(value1));
 }
 
-TEST_CASE("difference in third member", "[batgen::tuple_hash]") {
+TEST_CASE("difference in third member", "[batgen::TupleHash]") {
     Value value0(true, 17, 'a');
     Value value1(true, 17, 'b');
 

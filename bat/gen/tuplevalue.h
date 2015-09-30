@@ -32,9 +32,9 @@
 #include "bat/gen/tupleoutput.h"
 
 // ----------------------------------------------------------------------------
-// The class template `batgen::tuple_value<T>` is used to provide several value
+// The class template `batgen::TupleValue<T>` is used to provide several value
 // operators for `T` based on a tuple-like member declaration (see
-// `batgen::tuple`): simply derive from `batgen::tuple_value<T>` and provide a
+// `batgen::tuple`): simply derive from `batgen::TupleValue<T>` and provide a
 // member `typedef` named `tuple` listing the salient members of `T`. The
 // operations provided are
 //  - output `operator<<()`
@@ -45,38 +45,38 @@
 // For example:
 //
 //    class Value
-//        : private batgen::tuple_value<Value>
+//        : private batgen::TupleValue<Value>
 //    {
 //        bool bv;
 //        int  iv;
 //        char cv;
 //    public:
-//        typedef batgen::tuple_members<
-//            batgen::tuple_const_member<bool, Value, &Value::bv>,
-//            batgen::tuple_const_member<int,  Value, &Value::iv>,
-//            batgen::tuple_const_member<char, Value, &Value::cv>
+//        typedef batgen::TupleMembers<
+//            batgen::TupleConstMembers<bool, Value, &Value::bv>,
+//            batgen::TupleConstMembers<int,  Value, &Value::iv>,
+//            batgen::TupleConstMembers<char, Value, &Value::cv>
 //        > tuple;
 //
 //        Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
 //    };
 //
-// The base class `batgen::tuple_value<Value>` can [and probably should] be
+// The base class `batgen::TupleValue<Value>` can [and probably should] be
 // `private`! The provided operators are non-member operators found via ADL.
 
 namespace BloombergLP {
     namespace batgen {
-        template <typename> class tuple_value;
+        template <typename> class TupleValue;
     }
 }
 
 // ----------------------------------------------------------------------------
 
 template <typename Type>
-class BloombergLP::batgen::tuple_value
-    : BloombergLP::batgen::tuple_equalto<Type>
-    , BloombergLP::batgen::tuple_hash<Type>
-    , BloombergLP::batgen::tuple_lessthan<Type>
-    , BloombergLP::batgen::tuple_output<Type>
+class BloombergLP::batgen::TupleValue
+    : BloombergLP::batgen::TupleEqualTo<Type>
+    , BloombergLP::batgen::TupleHash<Type>
+    , BloombergLP::batgen::TupleLessThan<Type>
+    , BloombergLP::batgen::TupleOutput<Type>
 {
 };
 

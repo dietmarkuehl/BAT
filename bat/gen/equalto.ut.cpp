@@ -36,13 +36,13 @@ using namespace BloombergLP;
 
 namespace {
     class Value
-        : private batgen::equal_to<Value> {
+        : private batgen::EqualTo<Value> {
     private:
         int d_value;
 
     public:
         explicit Value(int value): d_value(value) {}
-        bool equal_to(Value const& other) const {
+        bool equalTo(Value const& other) const {
             return this->d_value == other.d_value;
         }
         int value() const { return this->d_value; }
@@ -55,7 +55,7 @@ namespace {
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("breathing test", "[batgen::equal_to]") {
+TEST_CASE("breathing test", "[batgen::EqualTo]") {
     Value v1(1), v2(2);
 
     REQUIRE(v1 == v1);
@@ -64,6 +64,6 @@ TEST_CASE("breathing test", "[batgen::equal_to]") {
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("no size contribution", "[batgen::equal_to]") {
+TEST_CASE("no size contribution", "[batgen::EqualTo]") {
     REQUIRE(sizeof(Value) == sizeof(int));
 }

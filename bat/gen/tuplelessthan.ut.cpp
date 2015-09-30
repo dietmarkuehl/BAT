@@ -36,17 +36,17 @@ using namespace BloombergLP;
 
 namespace {
     class Value
-        : private batgen::tuple_lessthan<Value>
-        , private batgen::tuple_output<Value>
+        : private batgen::TupleLessThan<Value>
+        , private batgen::TupleOutput<Value>
     {
         bool bv;
         int  iv;
         char cv;
     public:
-        typedef batgen::tuple_members<
-            batgen::tuple_const_member<bool, Value, &Value::bv>,
-            batgen::tuple_const_member<int,  Value, &Value::iv>,
-            batgen::tuple_const_member<char, Value, &Value::cv>
+        typedef batgen::TupleMembers<
+            batgen::TupleConstMember<bool, Value, &Value::bv>,
+            batgen::TupleConstMember<int,  Value, &Value::iv>,
+            batgen::TupleConstMember<char, Value, &Value::cv>
         > tuple;
 
         Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
@@ -61,7 +61,7 @@ namespace {
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("breathing test", "[batgen::tuple_lessthan]") {
+TEST_CASE("breathing test", "[batgen::TupleLessThan]") {
     Value value(true,  17, 'b');
 
     REQUIRE_FALSE(value <  value);
@@ -70,11 +70,11 @@ TEST_CASE("breathing test", "[batgen::tuple_lessthan]") {
     REQUIRE      (value >= value);
 }
 
-TEST_CASE("no size impact", "[batgen::tuple_lessthan]") {
+TEST_CASE("no size impact", "[batgen::TupleLessThan]") {
     REQUIRE(sizeof(Value) == sizeof(Sizer));
 }
 
-TEST_CASE("difference in first member", "[batgen::tuple_lessthan]") {
+TEST_CASE("difference in first member", "[batgen::TupleLessThan]") {
     Value value0(true,  17, 'b');
     Value value1(false, 17, 'b');
 
@@ -89,7 +89,7 @@ TEST_CASE("difference in first member", "[batgen::tuple_lessthan]") {
     REQUIRE_FALSE(value1 >= value0);
 }
 
-TEST_CASE("difference in second member", "[batgen::tuple_lessthan]") {
+TEST_CASE("difference in second member", "[batgen::TupleLessThan]") {
     Value value0(true, 17, 'b');
     Value value1(true, 16, 'b');
 
@@ -104,7 +104,7 @@ TEST_CASE("difference in second member", "[batgen::tuple_lessthan]") {
     REQUIRE_FALSE(value1 >= value0);
 }
 
-TEST_CASE("difference in third member", "[batgen::tuple_lessthan]") {
+TEST_CASE("difference in third member", "[batgen::TupleLessThan]") {
     Value value0(true, 17, 'b');
     Value value1(true, 17, 'a');
 

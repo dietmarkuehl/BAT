@@ -38,16 +38,16 @@ using namespace BloombergLP;
 
 namespace {
     class Value
-        : private batgen::tuple_value<Value>
+        : private batgen::TupleValue<Value>
     {
         bool bv;
         int  iv;
         char cv;
     public:
-        typedef batgen::tuple_members<
-            batgen::tuple_const_member<bool, Value, &Value::bv>,
-            batgen::tuple_const_member<int,  Value, &Value::iv>,
-            batgen::tuple_const_member<char, Value, &Value::cv>
+        typedef batgen::TupleMembers<
+            batgen::TupleConstMember<bool, Value, &Value::bv>,
+            batgen::TupleConstMember<int,  Value, &Value::iv>,
+            batgen::TupleConstMember<char, Value, &Value::cv>
         > tuple;
 
         Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
@@ -62,7 +62,7 @@ namespace {
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("breathing test", "[batgen::tuple_value]") {
+TEST_CASE("breathing test", "[batgen::TupleValue]") {
     Value              value(true,  17, 'b');
     bsl::ostringstream out;
     out << bsl::boolalpha << value;
@@ -77,6 +77,6 @@ TEST_CASE("breathing test", "[batgen::tuple_value]") {
     REQUIRE      (bslh::Hash<>()(value) == bslh::Hash<>()(value));
 }
 
-TEST_CASE("no size impact", "[batgen::tuple_value]") {
+TEST_CASE("no size impact", "[batgen::TupleValue]") {
     REQUIRE(sizeof(Value) == sizeof(Sizer));
 }

@@ -31,58 +31,58 @@
 #include <bslmf_enableif.h>
 
 // ----------------------------------------------------------------------------
-// The class template `batgen::tuple_hash<T>` is used to provide a hash value
+// The class template `batgen::TupleHash<T>` is used to provide a hash value
 // for `T` based on a tuple-like member declaration (see `batgen::tuple`):
-// simply derive from `batgen::tuple_hash<T>` and provide a member `typedef`
+// simply derive from `batgen::TupleHash<T>` and provide a member `typedef`
 // named `tuple` listing the salient members of `T`. For example:
 //
 //    class Value
-//        : private batgen::tuple_hash<Value>
+//        : private batgen::TupleHash<Value>
 //    {
 //        bool bv;
 //        int  iv;
 //        char cv;
 //    public:
-//        typedef batgen::tuple_members<
-//            batgen::tuple_const_member<bool, Value, &Value::bv>,
-//            batgen::tuple_const_member<int,  Value, &Value::iv>,
-//            batgen::tuple_const_member<char, Value, &Value::cv>
+//        typedef batgen::TupleMembers<
+//            batgen::TupleConstMember<bool, Value, &Value::bv>,
+//            batgen::TupleConstMember<int,  Value, &Value::iv>,
+//            batgen::TupleConstMember<char, Value, &Value::cv>
 //        > tuple;
 //
 //        Value(bool bv, int iv, char cv) : bv(bv), iv(iv), cv(cv) {}
 //    };
 //
-// The base class `batgen::tuple_hash<Value>` can [and probably should] be
+// The base class `batgen::TupleHash<Value>` can [and probably should] be
 // `private`! The provided operators are non-member operators found via ADL.
 
 
 namespace BloombergLP {
     namespace batgen {
-        template <typename> class tuple_hash;
+        template <typename> class TupleHash;
     }
 }
 
 // ----------------------------------------------------------------------------
 
 template <typename Type>
-class BloombergLP::batgen::tuple_hash
+class BloombergLP::batgen::TupleHash
 {
     template <int Index, typename Algorithm, typename T>
     static
-    typename bsl::enable_if<batgen::tuple_size<T>::value <= Index>::type
+    typename bsl::enable_if<batgen::TupleSize<T>::value <= Index>::type
     append(Algorithm&, T const&) {
     }
     template <int Index, typename Algorithm, typename T>
     static
-    typename bsl::enable_if<Index < batgen::tuple_size<T>::value>::type
+    typename bsl::enable_if<Index < batgen::TupleSize<T>::value>::type
     append(Algorithm& algorithm, T const& value) {
         using bslh::hashAppend;
         hashAppend(algorithm, batgen::get<Index>(value));
-        tuple_hash<Type>::append<Index + 1>(algorithm, value);
+        TupleHash<Type>::append<Index + 1>(algorithm, value);
     }
     template <typename Algorithm>
     friend void hashAppend(Algorithm& algorithm, Type const& value) {
-        tuple_hash<Type>::append<0>(algorithm, value);
+        TupleHash<Type>::append<0>(algorithm, value);
     }
 };
 
