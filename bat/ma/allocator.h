@@ -34,7 +34,7 @@ void  operator delete(void* pointer, BloombergLP::batma::Allocator& allocator);
 //
 // Note that `batma::Allocator` objects are immutable! The only data member is
 // a pointer to an allocator which is declared to be `const`. The entire
-// functionality of this class consists of an easy way to get hold fo the
+// functionality of this class consists of an easy way to get hold of the
 // default allocator, provision of an assignment operator which does nothing,
 // a number of access functions to the stored allocator.
 //
