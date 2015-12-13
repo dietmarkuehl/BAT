@@ -15,9 +15,9 @@ using namespace BloombergLP;
 TEST_CASE("breathing test", "[batma::Allocator]") {
     bslma::TestAllocator testAllocator;
     batma::Allocator allocator0;
-    batma::Allocator allocator1(&testAllocator);
-    batma::Allocator allocator2(bslmf::MovableRefUtil::move(allocator1));
-    allocator0 = allocator2;
+    batma::Allocator allocator1(allocator0);
+    batma::Allocator allocator2(&testAllocator);
+    batma::Allocator allocator3(bslmf::MovableRefUtil::move(allocator1));
 
     REQUIRE(allocator0.get());
     REQUIRE(static_cast<bslma::Allocator*>(allocator0) != 0);
@@ -75,25 +75,6 @@ TEST_CASE("the move ctor stores the stored allocator of the argument",
 
     REQUIRE(allocator0.get() == &testAllocator);
     REQUIRE(allocator1.get() == &testAllocator);
-}
-
-// ----------------------------------------------------------------------------
-
-TEST_CASE("assign operator doesn't change the stored allocator",
-          "[batma::Allocator]") {
-    bslma::TestAllocator testAllocator0;
-    batma::Allocator     allocator0(&testAllocator0);
-    bslma::TestAllocator testAllocator1;
-    batma::Allocator     allocator1(&testAllocator1);
-
-    REQUIRE(allocator0.get() == &testAllocator0);
-    REQUIRE(allocator1.get() == &testAllocator1);
-
-    batma::Allocator& allocator = (allocator0 = allocator1);
-
-    REQUIRE(&allocator == &allocator0);
-    REQUIRE(allocator0.get() == &testAllocator0);
-    REQUIRE(allocator1.get() == &testAllocator1);
 }
 
 // ----------------------------------------------------------------------------

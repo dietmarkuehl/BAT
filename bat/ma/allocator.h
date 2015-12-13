@@ -17,20 +17,17 @@ namespace BloombergLP {
     }
 }
 
-// Allocate `size` bytes of memory using the allocator pointed to by
-// the specified `allocator`.
+// Allocate `size` bytes of memory using the specified `allocator`.
 void* operator new(bsl::size_t size, BloombergLP::batma::Allocator& allocator);
-// Release the memory pointed to by `pointer` using the allocator
-// pointed to by the specified `allocator`.
+// Release the memory pointed to by `pointer` using the specified `allocator`.
 void  operator delete(void* pointer, BloombergLP::batma::Allocator& allocator);
 
 // ----------------------------------------------------------------------------
 // The class `batma::Allocator` provides a thin wrapper around
-// `bslma::Allocator` intended to be used a class member holding the allocator
-// pointer. It main objectives are to avoid having the allocator being replaced
-// in assignments (so the automatically generated constructors may be viable)
-// and to obtain the default allocator when the allocator the object is
-// constructed with is null.
+// `bslma::Allocator` intended to be used as class member holding the allocator
+// pointer. It main objectives are preventing some default generated functions
+// which wouldn't work with classes handling allocators and to obtain the
+// default allocator when the allocator the object is constructed with is null.
 //
 // Note that `batma::Allocator` objects are immutable! The only data member is
 // a pointer to an allocator which is declared to be `const`. The entire
@@ -45,20 +42,25 @@ class BloombergLP::batma::Allocator
 {
     bslma::Allocator *const d_allocator;
 
-    // The copy constructor is made private because allocator-aware types
-    // should provide a copy constructor which optinoally takes a point to an
-    // allocator.
-    Allocator(Allocator const&); // = delete
+    // The assignment operator is made inaccessible to enforce implementation
+    // of a suitable assignment operator.
+    Allocator& operator= (Allocator const&);
 public:
+    // The default constructor initializes the `Allocator` object with the
+    // currently installed default allocator using
+    // `bslma::Default::defaultAllocator()`. The main difference to the
+    // constructor taking a `bslma::Allocator*` is that default constructor
+    // doesn't need to check the argument.
+    Allocator();
     // Initialize the object with the passed `allocator` or with the default
     // allocator if null is passed.
-    explicit Allocator(bslma::Allocator *allocator = 0);
+    explicit Allocator(bslma::Allocator *allocator);
+    // The copy constructor just copies the argument. Since `batma::Allocator`
+    // may be used as value parameter to constructors, it can't be made
+    // inaccessible.
+    Allocator(Allocator const&); // = delete
     // The move constructor does propagate the stored allocator.
     Allocator(bslmf::MovableRef<Allocator> other);
-    // The assignment operator does nothing except return a reference to the
-    // object which is exactly the desired behavior inhibiting change of the
-    // allocator.
-    Allocator& operator= (Allocator const&);
 
     // The dereference operator returns a reference to the stored allocator.
     bslma::Allocator& operator*() const;
@@ -85,13 +87,18 @@ public:
 // ----------------------------------------------------------------------------
 
 inline
+BloombergLP::batma::Allocator::Allocator()
+    : d_allocator(bslma::Default::defaultAllocator()) {
+}
+
+inline
 BloombergLP::batma::Allocator::Allocator(bslma::Allocator *allocator)
     : d_allocator(bslma::Default::allocator(allocator)) {
 }
 
 inline
-BloombergLP::batma::Allocator::Allocator(batma::Allocator const&)
-    : d_allocator(bslma::Default::allocator()) {
+BloombergLP::batma::Allocator::Allocator(batma::Allocator const& other)
+    : d_allocator(other.d_allocator) {
 }
 
 inline
@@ -99,13 +106,6 @@ BloombergLP::batma::Allocator::Allocator(bslmf::MovableRef<batma::Allocator> oth
     : d_allocator(bslmf::MovableRefUtil::access(other).d_allocator) {
 }
 
-inline
-BloombergLP::batma::Allocator&
-BloombergLP::batma::Allocator::operator= (Allocator const&) {
-    return *this;
-}
-
-inline
 BloombergLP::bslma::Allocator&
 BloombergLP::batma::Allocator::operator*() const {
     return *this->d_allocator;
