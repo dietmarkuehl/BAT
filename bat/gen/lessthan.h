@@ -30,6 +30,13 @@
 #include <bslmf_enableif.h>
 
 // ----------------------------------------------------------------------------
+// The class template `LessThan` is used to tag a type as providing an ordering
+// relation. A class providing a less than operator (operator<()) could derive
+// from it to get the other relational operations provided based on the less
+// than operator. If the class `Type` deriving from `LessThan<Type>` doesn't
+// provide a less than operator, it is assumed that there is a member operation
+// `lessThan()` which can be used to implement the less than operation.
+
 
 namespace BloombergLP {
     namespace batgen {
@@ -46,15 +53,15 @@ struct BloombergLP::batgen::LessThan {
     }
 
     friend bool operator<= (Type const& value0, Type const& value1) {
-        return !value1.lessThan(value0);
+        return !(value1 < value0);
     }
 
     friend bool operator> (Type const& value0, Type const& value1) {
-        return value1.lessThan(value0);
+        return value1 < value0;
     }
 
     friend bool operator>= (Type const& value0, Type const& value1) {
-        return !value0.lessThan(value1);
+        return !(value0 < value1);
     }
 };
 

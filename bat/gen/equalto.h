@@ -27,11 +27,11 @@
 #define INCLUDED_BATGEN_EQUALTO
 
 // ----------------------------------------------------------------------------
-// The class template `EqualTo` is use to tag a type as providing an equality
+// The class template `EqualTo` is used to tag a type as providing an equality
 // operation. A class providing an equality operation could derive from it to
 // get the inequality operation provided based on the equality. If the class
 // `Type` deriving from `EqualTo<Type>` doesn't provide an equality operator,
-// it is assumed that there is a member operation `EqualTo()` which can be
+// it is assumed that there is a member operation `equalTo()` which can be
 // used to implement the equality operation.
 
 namespace BloombergLP {

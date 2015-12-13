@@ -44,7 +44,7 @@ class BloombergLP::batma::Allocator
 
     // The assignment operator is made inaccessible to enforce implementation
     // of a suitable assignment operator.
-    Allocator& operator= (Allocator const&);
+    Allocator& operator= (Allocator const&); // = delete
 public:
     // The default constructor initializes the `Allocator` object with the
     // currently installed default allocator using
@@ -58,7 +58,7 @@ public:
     // The copy constructor just copies the argument. Since `batma::Allocator`
     // may be used as value parameter to constructors, it can't be made
     // inaccessible.
-    Allocator(Allocator const&); // = delete
+    Allocator(Allocator const&);
     // The move constructor does propagate the stored allocator.
     Allocator(bslmf::MovableRef<Allocator> other);
 
