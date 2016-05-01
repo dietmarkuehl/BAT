@@ -26,6 +26,10 @@
 #ifndef INCLUDED_BAT_GEN_TOTALORDER
 #define INCLUDED_BAT_GEN_TOTALORDER
 
+#include <bslmf_enableif.h>
+#include <bslmf_isenum.h>
+#include <bslmf_isintegral.h>
+
 // ----------------------------------------------------------------------------
 
 namespace BloombergLP {
@@ -48,6 +52,19 @@ namespace BloombergLP {
         extern struct TotalOrderLess         const totalOrderLess;
         extern struct TotalOrderGreaterEqual const totalOrderGreaterEqual;
         extern struct TotalOrderLessEqual    const totalOrderLessEqual;
+
+        template <typename Type>
+        typename bsl::enable_if<
+            bsl::is_integral<Type>::value || bsl::is_enum<Type>::value
+            , TotalOrderingType>::type 
+        totalOrder(Type v0, Type v1) {
+            return v0 == v1
+                ? TotalOrdering::equal
+                : (v0 < v1
+                   ? TotalOrdering::less
+                   : TotalOrdering::greater)
+                ;
+        }
     }
 }
 

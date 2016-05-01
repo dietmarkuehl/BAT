@@ -59,7 +59,7 @@ namespace {
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("TotalOrdering test", "[batgen::TotalOrdering]") {
+TEST_CASE("TotalOrdering test", "[batgen::TotalOrder]") {
     batgen::TotalOrderingType l = batgen::TotalOrdering::less;
     batgen::TotalOrderingType e = batgen::TotalOrdering::equal;
     batgen::TotalOrderingType g = batgen::TotalOrdering::greater;
@@ -71,7 +71,7 @@ TEST_CASE("TotalOrdering test", "[batgen::TotalOrdering]") {
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("TotalOrdered test", "[batgen::TotalOrdered]") {
+TEST_CASE("TotalOrdered test", "[batgen::TotalOrder]") {
     Value v1(1), v2(2);
 
     REQUIRE(batgen::TotalOrdering::less    == totalOrder(v1, v2));
@@ -88,21 +88,21 @@ TEST_CASE("TotalOrdered test", "[batgen::TotalOrdered]") {
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("TotalOrderEqualTo test", "[batgen::TotalOrderEqualTo]") {
+TEST_CASE("TotalOrderEqualTo test", "[batgen::TotalOrder]") {
     Value v1(1), v2(2), v3(1);
 
     REQUIRE(false == batgen::totalOrderEqualTo(v1, v2));
     REQUIRE(true  == batgen::totalOrderEqualTo(v1, v3));
 }
 
-TEST_CASE("TotalOrderNotEqualTo test", "[batgen::TotalOrderNotEqualTo]") {
+TEST_CASE("TotalOrderNotEqualTo test", "[batgen::TotalOrder]") {
     Value v1(1), v2(2), v3(1);
 
     REQUIRE(false == batgen::totalOrderNotEqualTo(v1, v3));
     REQUIRE(true  == batgen::totalOrderNotEqualTo(v1, v2));
 }
 
-TEST_CASE("TotalOrderGreater test", "[batgen::TotalOrderGreater]") {
+TEST_CASE("TotalOrderGreater test", "[batgen::TotalOrder]") {
     Value v1(1), v2(2), v3(1);
 
     REQUIRE(false == batgen::totalOrderGreater(v1, v3));
@@ -110,7 +110,7 @@ TEST_CASE("TotalOrderGreater test", "[batgen::TotalOrderGreater]") {
     REQUIRE(true  == batgen::totalOrderGreater(v2, v1));
 }
 
-TEST_CASE("TotalOrderLess test", "[batgen::TotalOrderLess]") {
+TEST_CASE("TotalOrderLess test", "[batgen::TotalOrder]") {
     Value v1(1), v2(2), v3(1);
 
     REQUIRE(false == batgen::totalOrderLess(v1, v3));
@@ -118,7 +118,7 @@ TEST_CASE("TotalOrderLess test", "[batgen::TotalOrderLess]") {
     REQUIRE(true  == batgen::totalOrderLess(v1, v2));
 }
 
-TEST_CASE("TotalOrderGreaterEqual test", "[batgen::TotalOrderGreaterEqual]") {
+TEST_CASE("TotalOrderGreaterEqual test", "[batgen::TotalOrder]") {
     Value v1(1), v2(2), v3(1);
 
     REQUIRE(false == batgen::totalOrderGreaterEqual(v1, v2));
@@ -126,10 +126,48 @@ TEST_CASE("TotalOrderGreaterEqual test", "[batgen::TotalOrderGreaterEqual]") {
     REQUIRE(true  == batgen::totalOrderGreaterEqual(v1, v3));
 }
 
-TEST_CASE("TotalOrderLessEqual test", "[batgen::TotalOrderLessEqual]") {
+TEST_CASE("TotalOrderLessEqual test", "[batgen::TotalOrder]") {
     Value v1(1), v2(2), v3(1);
 
     REQUIRE(false == batgen::totalOrderLessEqual(v2, v1));
     REQUIRE(true  == batgen::totalOrderLessEqual(v1, v2));
     REQUIRE(true  == batgen::totalOrderLessEqual(v1, v3));
+}
+
+// ----------------------------------------------------------------------------
+
+template <typename T>
+static bool testTotalOrder(T v1, T v2) {
+    using batgen::totalOrder;
+    return totalOrder(v1, v2) == batgen::TotalOrdering::less
+        && totalOrder(v1, v1) == batgen::TotalOrdering::equal
+        && totalOrder(v2, v1) == batgen::TotalOrdering::greater
+        ;
+}
+
+namespace {
+    enum Enum { enum1, enum2 };
+}
+
+TEST_CASE("totalOrder() for built-in types", "[batgen::TotalOrder]") {
+    REQUIRE(testTotalOrder<Value>(Value(1), Value(2)));
+
+    REQUIRE(testTotalOrder<wchar_t>(1, 2));
+    REQUIRE(testTotalOrder<char>(1, 2));
+    REQUIRE(testTotalOrder<signed char>(1, 2));
+    REQUIRE(testTotalOrder<unsigned char>(1, 2));
+    REQUIRE(testTotalOrder<signed short>(1, 2));
+    REQUIRE(testTotalOrder<unsigned short>(1, 2));
+    REQUIRE(testTotalOrder<signed int>(1, 2));
+    REQUIRE(testTotalOrder<unsigned int>(1, 2));
+    REQUIRE(testTotalOrder<signed long>(1, 2));
+    REQUIRE(testTotalOrder<unsigned long>(1, 2));
+#if 201103L <= __cplusplus
+    REQUIRE(testTotalOrder<char16_t>(1, 2));
+    REQUIRE(testTotalOrder<char32_t>(1, 2));
+    REQUIRE(testTotalOrder<signed long long>(1, 2));
+    REQUIRE(testTotalOrder<unsigned long long>(1, 2));
+#endif
+
+    REQUIRE(testTotalOrder<Enum>(enum1, enum2));
 }
