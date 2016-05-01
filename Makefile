@@ -37,6 +37,7 @@ LIBCXXFILES += \
 	bat/gen/tuplevalue.cpp \
 	bat/ma/allocator.cpp \
 	bat/mf/isbaseof.cpp \
+	bat/gen/totalorder.cpp \
 
 # LIBCXXFILES = bat/gen/tupleoutput.cpp
 
