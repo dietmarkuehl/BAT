@@ -24,3 +24,14 @@
 // ----------------------------------------------------------------------------
 
 #include "bat/gen/totalorder.h"
+
+namespace BG = ::BloombergLP::batgen;
+
+// ----------------------------------------------------------------------------
+
+BG::TotalOrderEqualTo      const BG::totalOrderEqualTo;
+BG::TotalOrderNotEqualTo   const BG::totalOrderNotEqualTo;
+BG::TotalOrderGreater      const BG::totalOrderGreater;
+BG::TotalOrderLess         const BG::totalOrderLess;
+BG::TotalOrderGreaterEqual const BG::totalOrderGreaterEqual;
+BG::TotalOrderLessEqual    const BG::totalOrderLessEqual;

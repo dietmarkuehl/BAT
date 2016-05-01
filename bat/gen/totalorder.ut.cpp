@@ -38,6 +38,10 @@ namespace {
         : private batgen::TotalOrdered<Value> {
     private:
         int d_value;
+    public:
+        explicit Value(int value): d_value(value) {}
+        int value() const { return this->d_value; }
+
         friend batgen::TotalOrderingType
         totalOrder(Value const& v1, Value const& v2) {
             return v1.d_value == v2.d_value
@@ -46,10 +50,6 @@ namespace {
                    ? batgen::TotalOrdering::less
                    : batgen::TotalOrdering::greater);
         }
-
-    public:
-        explicit Value(int value): d_value(value) {}
-        int value() const { return this->d_value; }
     };
     
     bsl::ostream& operator<< (bsl::ostream& out, Value const& value) {
@@ -59,7 +59,7 @@ namespace {
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("TotalOrdering breathing test", "[batgen::TotalOrdering]") {
+TEST_CASE("TotalOrdering test", "[batgen::TotalOrdering]") {
     batgen::TotalOrderingType l = batgen::TotalOrdering::less;
     batgen::TotalOrderingType e = batgen::TotalOrdering::equal;
     batgen::TotalOrderingType g = batgen::TotalOrdering::greater;
@@ -71,7 +71,7 @@ TEST_CASE("TotalOrdering breathing test", "[batgen::TotalOrdering]") {
 
 // ----------------------------------------------------------------------------
 
-TEST_CASE("TotalOrdered breathing test", "[batgen::TotalOrdered]") {
+TEST_CASE("TotalOrdered test", "[batgen::TotalOrdered]") {
     Value v1(1), v2(2);
 
     REQUIRE(batgen::TotalOrdering::less    == totalOrder(v1, v2));
@@ -84,4 +84,52 @@ TEST_CASE("TotalOrdered breathing test", "[batgen::TotalOrdered]") {
     REQUIRE(v2 >= v1); REQUIRE(v2 >= v2);
     REQUIRE(v1 == v1);
     REQUIRE(v1 != v2);
+}
+
+// ----------------------------------------------------------------------------
+
+TEST_CASE("TotalOrderEqualTo test", "[batgen::TotalOrderEqualTo]") {
+    Value v1(1), v2(2), v3(1);
+
+    REQUIRE(false == batgen::totalOrderEqualTo(v1, v2));
+    REQUIRE(true  == batgen::totalOrderEqualTo(v1, v3));
+}
+
+TEST_CASE("TotalOrderNotEqualTo test", "[batgen::TotalOrderNotEqualTo]") {
+    Value v1(1), v2(2), v3(1);
+
+    REQUIRE(false == batgen::totalOrderNotEqualTo(v1, v3));
+    REQUIRE(true  == batgen::totalOrderNotEqualTo(v1, v2));
+}
+
+TEST_CASE("TotalOrderGreater test", "[batgen::TotalOrderGreater]") {
+    Value v1(1), v2(2), v3(1);
+
+    REQUIRE(false == batgen::totalOrderGreater(v1, v3));
+    REQUIRE(false == batgen::totalOrderGreater(v1, v2));
+    REQUIRE(true  == batgen::totalOrderGreater(v2, v1));
+}
+
+TEST_CASE("TotalOrderLess test", "[batgen::TotalOrderLess]") {
+    Value v1(1), v2(2), v3(1);
+
+    REQUIRE(false == batgen::totalOrderLess(v1, v3));
+    REQUIRE(false == batgen::totalOrderLess(v2, v1));
+    REQUIRE(true  == batgen::totalOrderLess(v1, v2));
+}
+
+TEST_CASE("TotalOrderGreaterEqual test", "[batgen::TotalOrderGreaterEqual]") {
+    Value v1(1), v2(2), v3(1);
+
+    REQUIRE(false == batgen::totalOrderGreaterEqual(v1, v2));
+    REQUIRE(true  == batgen::totalOrderGreaterEqual(v2, v1));
+    REQUIRE(true  == batgen::totalOrderGreaterEqual(v1, v3));
+}
+
+TEST_CASE("TotalOrderLessEqual test", "[batgen::TotalOrderLessEqual]") {
+    Value v1(1), v2(2), v3(1);
+
+    REQUIRE(false == batgen::totalOrderLessEqual(v2, v1));
+    REQUIRE(true  == batgen::totalOrderLessEqual(v1, v2));
+    REQUIRE(true  == batgen::totalOrderLessEqual(v1, v3));
 }

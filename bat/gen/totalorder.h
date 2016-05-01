@@ -40,35 +40,90 @@ namespace BloombergLP {
         using TotalOrderingType = TotalOrdering;
 #endif
 
-        template <typename Type>
-        struct TotalOrdered {
-            friend bool
-            operator== (Type const& value0, Type const& value1) {
-                return totalOrder(value0, value1) == TotalOrdering::equal;
-            }
-            friend bool
-            operator!= (Type const& value0, Type const& value1) {
-                return !(value0 == value1);
-            }
-            friend bool
-            operator<  (Type const& value0, Type const& value1) {
-                return totalOrder(value0, value1) == TotalOrdering::less;
-            }
-            friend bool
-            operator>  (Type const& value0, Type const& value1) {
-                return totalOrder(value0, value1) == TotalOrdering::greater;
-            }
-            friend bool
-            operator<= (Type const& value0, Type const& value1) {
-                return totalOrder(value0, value1) != TotalOrdering::greater;
-            }
-            friend bool
-            operator>= (Type const& value0, Type const& value1) {
-                return totalOrder(value0, value1) != TotalOrdering::less;
-            }
-        };
+        template <typename Type> struct TotalOrdered;
+
+        extern struct TotalOrderEqualTo      const totalOrderEqualTo;
+        extern struct TotalOrderNotEqualTo   const totalOrderNotEqualTo;
+        extern struct TotalOrderGreater      const totalOrderGreater;
+        extern struct TotalOrderLess         const totalOrderLess;
+        extern struct TotalOrderGreaterEqual const totalOrderGreaterEqual;
+        extern struct TotalOrderLessEqual    const totalOrderLessEqual;
     }
 }
+
+// ----------------------------------------------------------------------------
+
+template <typename Type>
+struct BloombergLP::batgen::TotalOrdered {
+    friend bool
+    operator== (Type const& value0, Type const& value1) {
+        return totalOrder(value0, value1) == TotalOrdering::equal;
+    }
+    friend bool
+    operator!= (Type const& value0, Type const& value1) {
+        return !(value0 == value1);
+    }
+    friend bool
+    operator<  (Type const& value0, Type const& value1) {
+        return totalOrder(value0, value1) == TotalOrdering::less;
+    }
+    friend bool
+    operator>  (Type const& value0, Type const& value1) {
+        return totalOrder(value0, value1) == TotalOrdering::greater;
+    }
+    friend bool
+    operator<= (Type const& value0, Type const& value1) {
+        return totalOrder(value0, value1) != TotalOrdering::greater;
+    }
+    friend bool
+    operator>= (Type const& value0, Type const& value1) {
+        return totalOrder(value0, value1) != TotalOrdering::less;
+    }
+};
+
+// ----------------------------------------------------------------------------
+
+struct BloombergLP::batgen::TotalOrderEqualTo {
+    template <typename Type>
+    inline bool operator()(Type const& value0, Type const& value1) const {
+        return totalOrder(value0, value1) == TotalOrdering::equal;
+    }
+};
+
+struct BloombergLP::batgen::TotalOrderNotEqualTo {
+    template <typename Type>
+    inline bool operator()(Type const& value0, Type const& value1) const {
+        return totalOrder(value0, value1) != TotalOrdering::equal;
+    }
+};
+
+struct BloombergLP::batgen::TotalOrderGreater {
+    template <typename Type>
+    inline bool operator()(Type const& value0, Type const& value1) const {
+        return totalOrder(value0, value1) == TotalOrdering::greater;
+    }
+};
+
+struct BloombergLP::batgen::TotalOrderLess {
+    template <typename Type>
+    inline bool operator()(Type const& value0, Type const& value1) const {
+        return totalOrder(value0, value1) == TotalOrdering::less;
+    }
+};
+
+struct BloombergLP::batgen::TotalOrderGreaterEqual {
+    template <typename Type>
+    inline bool operator()(Type const& value0, Type const& value1) const {
+        return totalOrder(value0, value1) != TotalOrdering::less;
+    }
+};
+
+struct BloombergLP::batgen::TotalOrderLessEqual {
+    template <typename Type>
+    inline bool operator()(Type const& value0, Type const& value1) const {
+        return totalOrder(value0, value1) != TotalOrdering::greater;
+    }
+};
 
 // ----------------------------------------------------------------------------
 
